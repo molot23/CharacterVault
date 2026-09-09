@@ -176,10 +176,10 @@ export function CharacterSettingsPanel({
       await clearAISettings();
       modelCatalog.resetProviderState();
       await reloadSettings();
-      addToast('success', 'AI settings cleared. Your characters are safe.');
+      addToast('success', t('settings.cleared'));
       setShowClearConfirm(false);
     } catch {
-      addToast('error', 'Failed to clear AI settings');
+      addToast('error', t('settings.clearFailed'));
     } finally {
       setIsClearing(false);
     }

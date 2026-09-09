@@ -31,9 +31,11 @@ import { PASSWORD_MANAGER_IGNORE_PROPS, SecretInput } from '../components/Secret
 import { SettingsToggle } from '../components/SettingsToggle';
 import type { ReasoningEffort } from '../../../db/characterTypes';
 import { getHiddenChainOfThoughtNote } from '../../../services/reasoning/hiddenChainOfThought';
+import { useI18n } from '../../../i18n';
 import type { SettingsTabProps } from '../types';
 
 export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpers }) => {
+  const { t } = useI18n();
   if (!helpers) return null;
 
   const {
@@ -69,12 +71,10 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
           </div>
           <div className="flex-1 min-w-0">
             <h4 className="text-sm font-semibold text-warning-soft-fg mb-1">
-              Security Notice
+              {t('settings.ai.securityTitle')}
             </h4>
             <p className="text-xs text-warning-soft-fg leading-relaxed">
-              Your API key is stored locally in your browser&apos;s storage. This is convenient but
-              means the key could be accessed by malicious browser extensions or if someone gains
-              physical access to your unlocked computer.
+              {t('settings.ai.securityBody')}
             </p>
             <div className="mt-3 flex items-center gap-2">
               <button
@@ -82,10 +82,10 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-warning-soft-fg bg-warning-soft hover:opacity-90 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                Clear AI Settings
+                {t('settings.ai.clearAiSettings')}
               </button>
               <span className="text-xs text-warning">
-                (Your characters will not be affected)
+                {t('settings.ai.clearUnaffected')}
               </span>
             </div>
           </div>
@@ -100,11 +100,10 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
             </div>
             <div className="flex-1 min-w-0">
               <h4 className="text-sm font-semibold text-danger-soft-fg mb-1">
-                Clear AI Settings?
+                {t('settings.ai.clearConfirmTitle')}
               </h4>
               <p className="text-xs text-danger mb-3">
-                This will remove your API key, base URL, and model selection. Your characters and
-                other data will remain untouched.
+                {t('settings.ai.clearConfirmBody')}
               </p>
               <div className="flex items-center gap-2">
                 <button
@@ -117,14 +116,14 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
                   ) : (
                     <Trash2 className="w-3.5 h-3.5" />
                   )}
-                  {isClearing ? 'Clearing...' : 'Yes, Clear Settings'}
+                  {isClearing ? t('settings.ai.clearing') : t('settings.ai.yesClear')}
                 </button>
                 <button
                   onClick={() => setShowClearConfirm(false)}
                   disabled={isClearing}
                   className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-danger-soft-fg hover:bg-danger-soft rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/50"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
               </div>
             </div>
@@ -139,7 +138,7 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
               <span className="p-1.5 rounded-md bg-muted text-fg-muted">
                 <Server className="w-4 h-4" />
               </span>
-              API Base URL
+              {t('settings.ai.apiBaseUrl')}
             </label>
             <div className="space-y-3">
               <select
@@ -177,7 +176,7 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
                     {preset.label}
                   </option>
                 ))}
-                <option value="custom">Custom URL</option>
+                <option value="custom">{t('settings.ai.customUrl')}</option>
               </select>
               <input
                 type="text"
@@ -189,9 +188,8 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
               />
               <p className="text-xs text-fg-muted">
                 {selectedBaseUrlPreset === 'custom'
-                  ? 'Pick a preset above or enter a custom OpenAI-compatible endpoint.'
-                  : AI_BASE_URL_PRESETS.find((preset) => preset.id === selectedBaseUrlPreset)
-                      ?.helper}
+                  ? t('settings.ai.customUrlHelp')
+                  : t(`settings.ai.presetHelpers.${selectedBaseUrlPreset}`)}
               </p>
             </div>
           </div>
@@ -201,9 +199,9 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
               <span className="p-1.5 rounded-md bg-muted text-fg-muted">
                 <Key className="w-4 h-4" />
               </span>
-              API Key
+              {t('settings.ai.apiKey')}
               {selectedBaseUrlPreset === 'lmstudio' && (
-                <span className="text-xs font-normal text-fg-muted">(optional for local)</span>
+                <span className="text-xs font-normal text-fg-muted">{t('settings.ai.optionalForLocal')}</span>
               )}
               {(() => {
                 const preset = AI_BASE_URL_PRESETS.find((p) => p.id === selectedBaseUrlPreset);
@@ -214,7 +212,7 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
                     rel="noopener noreferrer"
                     className="text-xs font-normal text-info hover:text-blue-400 hover:underline ml-1"
                   >
-                    Get your key ↗
+                    {t('settings.ai.getYourKey')}
                   </a>
                 ) : null;
               })()}
@@ -225,15 +223,15 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
               className="w-full px-3 py-2.5 border border-border-strong rounded-lg bg-surface text-fg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all duration-200"
               placeholder={
                 selectedBaseUrlPreset === 'lmstudio'
-                  ? 'Optional for local endpoints'
-                  : 'Enter your API key'
+                  ? t('settings.ai.optionalLocalPlaceholder')
+                  : t('settings.ai.apiKeyPlaceholder')
               }
             />
             {selectedBaseUrlPreset === 'nano-gpt' && (
               <>
                 <div className="flex items-center gap-3 my-1">
                   <div className="h-px flex-1 bg-hover" />
-                  <span className="text-xs text-fg-subtle">or</span>
+                  <span className="text-xs text-fg-subtle">{t('settings.ai.or')}</span>
                   <div className="h-px flex-1 bg-hover" />
                 </div>
                 <button
@@ -247,11 +245,10 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
                   ) : (
                     <LogIn className="w-4 h-4" />
                   )}
-                  {isSigningIn ? 'Signing in…' : 'Sign in with NanoGPT'}
+                  {isSigningIn ? t('settings.ai.signingIn') : t('settings.ai.signInNano')}
                 </button>
                 <p className="text-xs text-fg-muted mt-1.5">
-                  Opens NanoGPT in a new window to approve access. The app can spend from your
-                  NanoGPT balance until you revoke or limit the key.
+                  {t('settings.ai.signInHelp')}
                 </p>
               </>
             )}
@@ -317,7 +314,7 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
 
       {selectedBaseUrlPreset === 'nano-gpt' && (
         <SettingsCard
-          title="NanoGPT Options"
+          title={t('settings.ai.nanoOptions')}
           icon={<CreditCard className="w-4 h-4 text-fg-muted" />}
         >
           <div className="space-y-4">
@@ -333,13 +330,8 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
                   void fetchModels({ subscriptionOnly });
                 }
               }}
-              label="Subscription models only"
-              description={
-                <>
-                  Show only models included in your NanoGPT subscription. Ignores the &quot;Also
-                  show paid models&quot; preference.
-                </>
-              }
+              label={t('settings.ai.subscriptionOnly')}
+              description={t('settings.ai.subscriptionOnlyHelp')}
             />
             <SettingsToggle
               stacked
@@ -353,13 +345,8 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
                   },
                 }))
               }
-              label="Pay-as-you-go billing"
-              description={
-                <>
-                  Force pay-as-you-go pricing even with an active subscription. Required for
-                  provider selection on subscription-covered models.
-                </>
-              }
+              label={t('settings.ai.paygo')}
+              description={t('settings.ai.paygoHelp')}
             />
             <SettingsToggle
               stacked
@@ -370,21 +357,15 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
                   ai: { ...prev.ai, enableCacheProviderRouting: checked },
                 }))
               }
-              label="Cache-capable provider routing"
-              description={
-                <>
-                  Route requests to a provider that supports prompt caching for lower cost and
-                  latency. If no cache-capable provider is available for a model, the request will
-                  fail. Provider stickiness is on by default.
-                </>
-              }
+              label={t('settings.ai.cacheRouting')}
+              description={t('settings.ai.cacheRoutingHelp')}
             />
           </div>
         </SettingsCard>
       )}
 
       <SettingsCard
-        title="Advanced Options"
+        title={t('settings.ai.advanced')}
         icon={<Sparkles className="w-4 h-4 text-fg-muted" />}
       >
         <div className="flex flex-wrap items-center gap-6">
@@ -396,7 +377,7 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
                 ai: { ...prev.ai, enableStreaming: checked },
               }))
             }
-            label="Enable streaming"
+            label={t('settings.ai.enableStreaming')}
           />
           <SettingsToggle
             checked={!!localAIConfig.enableReasoning}
@@ -412,7 +393,7 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
                 },
               }))
             }
-            label="Enable reasoning"
+            label={t('settings.ai.enableReasoning')}
           />
           <SettingsToggle
             checked={localAIConfig.showReasoning !== false}
@@ -422,7 +403,7 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
                 ai: { ...prev.ai, showReasoning: checked },
               }))
             }
-            label="Show reasoning"
+            label={t('settings.ai.showReasoning')}
           />
         </div>
 
@@ -432,7 +413,7 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
               <span className="p-1.5 rounded-md bg-muted text-fg-muted">
                 <Brain className="w-4 h-4" />
               </span>
-              Reasoning Effort
+              {t('settings.ai.reasoningEffort')}
             </label>
             <select
               value={localAIConfig.reasoningEffort ?? 'medium'}
@@ -447,22 +428,22 @@ export const AIConfigTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpe
               }
               className="w-full px-3 py-2.5 border border-border-strong rounded-lg bg-surface text-fg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all duration-200"
             >
-              <option value="minimal">Minimal: fastest, almost no thinking</option>
-              <option value="low">Low: light thinking</option>
-              <option value="medium">Medium: balanced (default)</option>
-              <option value="high">High: thorough thinking</option>
-              <option value="xhigh">Extra high: peak on OpenAI-style models</option>
-              <option value="max">Max: peak on DeepSeek, GLM, and similar</option>
+              <option value="minimal">{t('settings.ai.effortMinimal')}</option>
+              <option value="low">{t('settings.ai.effortLow')}</option>
+              <option value="medium">{t('settings.ai.effortMedium')}</option>
+              <option value="high">{t('settings.ai.effortHigh')}</option>
+              <option value="xhigh">{t('settings.ai.effortXhigh')}</option>
+              <option value="max">{t('settings.ai.effortMax')}</option>
             </select>
             <p className="mt-2 text-xs text-fg-muted">
-              How hard the model thinks when reasoning is on.{' '}
+              {t('settings.ai.effortHelp')}{' '}
               <a
                 href={`${import.meta.env.BASE_URL}docs/configuration/reasoning-effort`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-medium text-fg-muted underline underline-offset-2 hover:text-fg"
               >
-                Read the reasoning effort guide
+                {t('settings.ai.effortGuide')}
               </a>
               .
             </p>

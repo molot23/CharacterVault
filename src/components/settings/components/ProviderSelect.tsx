@@ -5,6 +5,7 @@
  */
 
 import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useI18n } from '../../../i18n';
 import { createPortal } from 'react-dom';
 import { Check, ChevronDown, Loader2, Server, X, Zap } from 'lucide-react';
 import type { ModelProvider } from '../../../services/providers';
@@ -28,6 +29,7 @@ export const ProviderSelect: React.FC<ProviderSelectProps> = ({
   isLoading,
   disabled = false,
 }) => {
+  const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const titleId = useId();
 
@@ -82,7 +84,7 @@ export const ProviderSelect: React.FC<ProviderSelectProps> = ({
       <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center">
         <button
           type="button"
-          aria-label="Close provider picker"
+          aria-label={t('settings.provider.closePicker')}
           className="absolute inset-0 bg-overlay backdrop-blur-sm animate-in fade-in"
           onClick={closePicker}
         />
@@ -96,18 +98,22 @@ export const ProviderSelect: React.FC<ProviderSelectProps> = ({
             <div className="mx-auto sm:hidden w-10 h-1 rounded-full bg-border absolute left-1/2 -translate-x-1/2 top-2" />
             <div className="min-w-0 pt-2 sm:pt-0">
               <h3 id={titleId} className="text-base font-semibold text-fg">
-                Choose provider
+                {t('settings.provider.choose')}
               </h3>
               <p className="text-xs text-fg-muted mt-0.5">
-                {providers.length} NanoGPT host
-                {providers.length === 1 ? '' : 's'} for this model
+                {t(
+                  providers.length === 1
+                    ? 'settings.provider.hostCountOne'
+                    : 'settings.provider.hostCountMany',
+                  { count: providers.length },
+                )}
               </p>
             </div>
             <button
               type="button"
               onClick={closePicker}
               className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-accent-soft hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 touch-manipulation"
-              aria-label="Close"
+              aria-label={t('common.close')}
             >
               <X className="w-5 h-5" />
             </button>
@@ -134,7 +140,7 @@ export const ProviderSelect: React.FC<ProviderSelectProps> = ({
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-medium text-base sm:text-sm">Platform default</span>
+                    <span className="font-medium text-base sm:text-sm">{t('settings.provider.platformDefault')}</span>
                     {!selectedProvider && (
                       <Check className="w-4 h-4 shrink-0 text-accent" aria-hidden />
                     )}
@@ -144,7 +150,7 @@ export const ProviderSelect: React.FC<ProviderSelectProps> = ({
                       !selectedProvider ? 'text-accent/80' : 'text-fg-muted'
                     }`}
                   >
-                    Let NanoGPT pick the best available host
+                    {t('settings.provider.letNanoPick')}
                   </p>
                 </div>
               </div>
@@ -162,7 +168,7 @@ export const ProviderSelect: React.FC<ProviderSelectProps> = ({
                     handleSelect(provider.provider);
                   }}
                   disabled={isUnavailable}
-                  title={isUnavailable ? 'This provider is currently unavailable' : undefined}
+                  title={isUnavailable ? t('settings.provider.unavailable') : undefined}
                   className={`w-full min-h-12 px-3.5 py-3 rounded-xl border text-left transition-all touch-manipulation ${optionClass(
                     selected,
                     isUnavailable
@@ -224,7 +230,7 @@ export const ProviderSelect: React.FC<ProviderSelectProps> = ({
         <span className="p-1.5 rounded-md bg-muted text-fg-muted">
           <Zap className="w-4 h-4" />
         </span>
-        Provider
+        {t('settings.provider.label')}
       </label>
       <button
         type="button"
@@ -240,21 +246,23 @@ export const ProviderSelect: React.FC<ProviderSelectProps> = ({
           {isLoading ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin shrink-0 text-accent" />
-              <span className="text-fg-subtle">Loading providers…</span>
+              <span className="text-fg-subtle">{t('settings.provider.loading')}</span>
             </>
           ) : selectedProvider ? (
             <>
               <Server className="w-4 h-4 shrink-0 text-accent" />
               <span className="font-medium truncate">{selectedProvider}</span>
               <span className="text-fg-muted text-xs">
-                In {formatPrice(selectedProviderInfo?.pricing.inputPer1kTokens ?? 0)}/1k · Out{' '}
-                {formatPrice(selectedProviderInfo?.pricing.outputPer1kTokens ?? 0)}/1k
+                {t('settings.provider.pricing', {
+                  input: formatPrice(selectedProviderInfo?.pricing.inputPer1kTokens ?? 0),
+                  output: formatPrice(selectedProviderInfo?.pricing.outputPer1kTokens ?? 0),
+                })}
               </span>
             </>
           ) : (
             <>
               <Zap className="w-4 h-4 shrink-0 text-fg-subtle" />
-              <span className="text-fg-subtle">Platform default (auto-selected)</span>
+              <span className="text-fg-subtle">{t('settings.provider.platformDefaultAuto')}</span>
             </>
           )}
         </span>

@@ -4,6 +4,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useI18n } from '../../../i18n';
 import type { AIConfig, AIModelInfo, SamplerSettings } from '../../../db/characterTypes';
 import { AIService, AIError } from '../../../services/AIService';
 import type { ModelProvider } from '../../../services/providers';
@@ -46,6 +47,7 @@ export function useModelCatalog({
   setDraft,
   addToast,
 }: UseModelCatalogOptions) {
+  const { t } = useI18n();
   const [isFetchingModels, setIsFetchingModels] = useState(false);
   const [modelsByBaseUrl, setModelsByBaseUrl] = useState<Record<string, CachedModels>>({});
   const [fetchingModelsByBaseUrl, setFetchingModelsByBaseUrl] = useState<Record<string, boolean>>(
@@ -251,19 +253,19 @@ export function useModelCatalog({
           ...prev,
           [normalizedUrl]: { models, fetchedAt: Date.now(), subscriptionOnly },
         }));
-        addToast('success', `Fetched ${models.length} models`);
+        addToast('success', t('settings.ai.fetchedModels', { count: models.length }));
       } catch (err) {
         if (!mountedRef.current || !isOpenRef.current || isAbortError(err)) return;
         if (err instanceof AIError) {
           addToast('error', err.message);
         } else {
-          addToast('error', 'Failed to fetch models');
+          addToast('error', t('settings.ai.fetchModelsFailed'));
         }
       } finally {
         if (mountedRef.current && isOpenRef.current) setIsFetchingModels(false);
       }
     },
-    [addToast, setDraft]
+    [addToast, setDraft, t]
   );
 
   const fetchModelProviders = useCallback(

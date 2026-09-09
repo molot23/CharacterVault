@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useI18n } from '../../../i18n';
 import { AlertCircle, KeyRound, Loader2, RefreshCw, Wallet } from 'lucide-react';
 import {
   SyntheticProvider,
@@ -207,6 +208,7 @@ export const SyntheticAccountOverview: React.FC<SyntheticAccountOverviewProps> =
   apiKey,
   enabled,
 }) => {
+  const { t } = useI18n();
   const cachedOnMount = readFreshCache(baseUrl, apiKey);
   const [quotas, setQuotas] = useState<SyntheticQuotas | null>(
     () => cachedOnMount?.quotas ?? null
@@ -337,7 +339,7 @@ export const SyntheticAccountOverview: React.FC<SyntheticAccountOverviewProps> =
       <div className="flex items-center justify-between gap-2 mb-4">
         <h3 className="text-sm font-semibold text-fg flex items-center gap-2">
           <Wallet className="w-4 h-4 text-fg-muted" />
-          Synthetic Usage
+          {t('settings.account.synthetic.title')}
         </h3>
         {apiKey.trim() && (
           <button
@@ -346,20 +348,20 @@ export const SyntheticAccountOverview: React.FC<SyntheticAccountOverviewProps> =
             disabled={refreshDisabled}
             title={
               cooldownSec > 0
-                ? `Wait ${cooldownSec}s before refreshing again`
-                : 'Refresh subscription usage'
+                ? t('settings.account.synthetic.waitRefresh', { seconds: cooldownSec })
+                : t('settings.account.synthetic.refreshTitle')
             }
             className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-fg-muted hover:bg-hover rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-accent/50"
             aria-label={
               cooldownSec > 0
-                ? `Refresh available in ${cooldownSec} seconds`
-                : 'Refresh Synthetic usage'
+                ? t('settings.account.refreshAvailableIn', { seconds: cooldownSec })
+                : t('settings.account.synthetic.refreshAria')
             }
           >
             <RefreshCw
               className={`w-3.5 h-3.5 ${isRefreshing || status === 'loading' ? 'animate-spin' : ''}`}
             />
-            {cooldownSec > 0 ? `Refresh (${cooldownSec}s)` : 'Refresh'}
+            {cooldownSec > 0 ? t('settings.account.refreshCooldown', { seconds: cooldownSec }) : t('settings.account.refresh')}
           </button>
         )}
       </div>
@@ -381,7 +383,7 @@ export const SyntheticAccountOverview: React.FC<SyntheticAccountOverviewProps> =
           <AlertCircle className="w-4 h-4 text-danger shrink-0 mt-0.5" />
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium text-danger-soft-fg">Could not load usage</p>
-            <p className="text-xs text-danger mt-0.5">{error || 'Unknown error'}</p>
+            <p className="text-xs text-danger mt-0.5">{error || t('settings.account.unknownError')}</p>
             <button
               type="button"
               onClick={() => void fetchAccount({ manual: true })}

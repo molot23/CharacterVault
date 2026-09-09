@@ -47,6 +47,7 @@ import {
 import { lorebookAttachmentService } from '../../services/LorebookAttachmentService';
 import { lorebookSnapshotService } from '../../services/LorebookSnapshotService';
 import { showEphemeralToast } from '../../utils/ephemeralToast';
+import { useI18n } from '../../i18n';
 
 const LINKED_CHARACTER_SYNC_MS = 400;
 
@@ -61,6 +62,7 @@ function getIsMobileViewport(): boolean {
 }
 
 export function LorebookWorkspace(): React.ReactElement {
+  const { t } = useI18n();
   const {
     currentLorebook,
     closeLorebook,
@@ -176,17 +178,21 @@ export function LorebookWorkspace(): React.ReactElement {
     if (!book) return [];
     const chunks: string[] = [];
     const header = `Standalone Lorebook: ${book.name || currentLorebook?.name || 'World Info'}`;
-    chunks.push(book.description ? `${header}\n${book.description}` : header);
+    chunks.push(book.description ? `${header}
+${book.description}` : header);
     for (const entry of book.entries || []) {
       if (entry.extensions?.context_enabled === false) continue;
       if (!entry.enabled) continue;
       const title = entry.comment || entry.name || `Entry ${entry.id}`;
-      const keys = entry.keys?.length ? `Keys: ${entry.keys.join(', ')}\n` : '';
+      const keys = entry.keys?.length ? `Keys: ${entry.keys.join(', ')}
+` : '';
       const secondary =
         entry.selective && entry.secondary_keys?.length
-          ? `Secondary keys: ${entry.secondary_keys.join(', ')}\n`
+          ? `Secondary keys: ${entry.secondary_keys.join(', ')}
+`
           : '';
-      chunks.push(`### ${title}\n${keys}${secondary}${entry.content || ''}`);
+      chunks.push(`### ${title}
+${keys}${secondary}${entry.content || ''}`);
     }
     return chunks;
   }, [currentLorebook]);
@@ -517,7 +523,7 @@ export function LorebookWorkspace(): React.ReactElement {
                   ? 'bg-accent text-accent-fg'
                   : 'text-fg-muted hover:text-accent hover:bg-accent-soft'
               }`}
-              title={isChatOpen ? 'Hide Ask AI Panel' : 'Show Ask AI Panel'}
+              title={isChatOpen ? t('editor.hideAskAi') : t('editor.showAskAi')}
               aria-pressed={isChatOpen}
             >
               <MessageSquare className="w-4 h-4 md:w-5 md:h-5" />
@@ -531,7 +537,7 @@ export function LorebookWorkspace(): React.ReactElement {
                   ? 'bg-accent text-accent-fg'
                   : 'text-fg-muted hover:text-accent hover:bg-accent-soft'
               }`}
-              title={isChatOpen ? 'Hide Ask AI Panel' : 'Show Ask AI Panel'}
+              title={isChatOpen ? t('editor.hideAskAi') : t('editor.showAskAi')}
               aria-pressed={isChatOpen}
             >
               <PanelRight className="w-4 h-4" />

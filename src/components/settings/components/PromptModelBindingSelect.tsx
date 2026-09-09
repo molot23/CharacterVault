@@ -22,6 +22,7 @@ import {
   isPresetUrl,
   normalizeBaseUrl,
 } from '../config/aiBaseUrlPresets';
+import { useI18n } from '../../../i18n';
 import { useFocusOnOpen, useModalSheet } from '../hooks/useModalSheet';
 
 const DEFAULT_ENDPOINT = '__default__';
@@ -66,9 +67,11 @@ export const PromptModelBindingSelect: React.FC<PromptModelBindingSelectProps> =
   onChange,
   onFetch,
   isFetching,
-  heading = 'Model for this prompt',
+  heading,
   bare = false,
 }) => {
+  const { t } = useI18n();
+  const resolvedHeading = heading ?? t('settings.binding.heading');
   const [isModelOpen, setIsModelOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -80,7 +83,7 @@ export const PromptModelBindingSelect: React.FC<PromptModelBindingSelectProps> =
 
   const endpointOptions = useMemo(() => {
     const options: { value: string; label: string }[] = [
-      { value: DEFAULT_ENDPOINT, label: 'Default (AI Config)' },
+      { value: DEFAULT_ENDPOINT, label: t('settings.binding.defaultEndpoint') },
     ];
 
     for (const preset of AI_BASE_URL_PRESETS) {
@@ -107,7 +110,7 @@ export const PromptModelBindingSelect: React.FC<PromptModelBindingSelectProps> =
     }
 
     for (const url of extraUrls) {
-      options.push({ value: url, label: `Custom: ${url}` });
+      options.push({ value: url, label: t('settings.binding.customEndpoint', { url }) });
     }
 
     if (
@@ -116,7 +119,7 @@ export const PromptModelBindingSelect: React.FC<PromptModelBindingSelectProps> =
     ) {
       options.push({
         value: selectedEndpoint,
-        label: `Saved: ${selectedEndpoint}`,
+        label: t('settings.binding.savedEndpoint', { url: selectedEndpoint }),
       });
     }
 
@@ -176,7 +179,7 @@ export const PromptModelBindingSelect: React.FC<PromptModelBindingSelectProps> =
   const globalSummary =
     globalAi.modelId?.trim()
       ? `${endpointLabel(globalAi.baseUrl)} · ${globalAi.modelId}`
-      : 'No global model selected';
+      : t('settings.binding.noGlobalModel');
 
   const optionClass = (selected: boolean) =>
     selected
@@ -190,7 +193,7 @@ export const PromptModelBindingSelect: React.FC<PromptModelBindingSelectProps> =
       <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center">
         <button
           type="button"
-          aria-label="Close model picker"
+          aria-label={t('settings.model.closePicker')}
           className="absolute inset-0 bg-overlay backdrop-blur-sm animate-in fade-in"
           onClick={closeModelPicker}
         />
@@ -217,7 +220,7 @@ export const PromptModelBindingSelect: React.FC<PromptModelBindingSelectProps> =
               type="button"
               onClick={closeModelPicker}
               className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-accent-soft hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 touch-manipulation"
-              aria-label="Close"
+              aria-label={t('settings.model.close')}
             >
               <X className="w-5 h-5" />
             </button>
@@ -241,7 +244,7 @@ export const PromptModelBindingSelect: React.FC<PromptModelBindingSelectProps> =
                     handleSelectModel(filteredModels[0].id);
                   }
                 }}
-                placeholder="Search models…"
+                placeholder={t('settings.model.searchPlaceholder')}
                 className={`${fieldClass} pl-10 focus:border-accent/40`}
               />
             </div>
@@ -251,11 +254,11 @@ export const PromptModelBindingSelect: React.FC<PromptModelBindingSelectProps> =
             {filteredModels.length === 0 ? (
               <div className="px-2 py-10 text-sm text-fg-muted text-center space-y-1">
                 <p className="font-medium text-fg">
-                  {models.length === 0 ? 'No models loaded' : 'No matches'}
+                  {models.length === 0 ? t('settings.model.noModels') : t('settings.model.noMatches')}
                 </p>
                 <p className="text-xs">
                   {models.length === 0
-                    ? 'Use Fetch on the previous screen, or type a model ID there.'
+                    ? t('settings.binding.useFetchHint')
                     : `Nothing matched “${searchTerm}”`}
                 </p>
               </div>
@@ -322,7 +325,7 @@ export const PromptModelBindingSelect: React.FC<PromptModelBindingSelectProps> =
     <div className={bare ? 'space-y-3' : 'mt-3 pt-3 border-t border-border space-y-3'}>
       <div className="flex items-center gap-2 text-xs font-semibold text-fg-muted uppercase tracking-wide">
         <Brain className="w-3.5 h-3.5 shrink-0" />
-        {heading}
+        {resolvedHeading}
       </div>
 
       <div className="space-y-1.5">
@@ -369,7 +372,7 @@ export const PromptModelBindingSelect: React.FC<PromptModelBindingSelectProps> =
                       selectedModelId ? 'font-medium' : 'text-fg-subtle'
                     }`}
                   >
-                    {selectedModel?.name || 'Select a model…'}
+                    {selectedModel?.name || t('settings.model.select')}
                   </span>
                 </span>
                 <ChevronDown className="w-4 h-4 text-fg-subtle shrink-0" />
@@ -381,8 +384,8 @@ export const PromptModelBindingSelect: React.FC<PromptModelBindingSelectProps> =
                 disabled={isFetching || !hasKeyForEndpoint}
                 title={
                   !hasKeyForEndpoint
-                    ? 'Add an API key for this endpoint on the AI Config tab'
-                    : 'Fetch models for this endpoint'
+                    ? t('settings.binding.addKeyHint')
+                    : t('settings.binding.fetchForEndpoint')
                 }
                 className="min-h-11 px-4 py-2.5 bg-muted hover:bg-accent-soft hover:text-accent disabled:opacity-50 disabled:cursor-not-allowed text-fg-muted rounded-xl transition-all flex items-center justify-center gap-2 text-base sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent/50 shrink-0 touch-manipulation"
               >
@@ -391,7 +394,7 @@ export const PromptModelBindingSelect: React.FC<PromptModelBindingSelectProps> =
                 ) : (
                   <RefreshCw className="w-4 h-4" />
                 )}
-                Fetch models
+                {t('settings.model.fetch')}
               </button>
             </div>
           </div>
@@ -411,14 +414,14 @@ export const PromptModelBindingSelect: React.FC<PromptModelBindingSelectProps> =
                 if (selectedEndpoint === DEFAULT_ENDPOINT) return;
                 onChange({ baseUrl: selectedEndpoint, modelId: e.target.value });
               }}
-              placeholder="e.g. gpt-oss-120b"
+              placeholder={t('settings.binding.modelIdPlaceholder')}
               className={fieldClass}
             />
           </div>
 
           {!hasKeyForEndpoint && (
             <p className="text-xs text-warning">
-              Add an API key for this endpoint on the AI Config tab before using this mapping.
+              {t('settings.binding.addKeyBeforeMapping')}
             </p>
           )}
           {hasKeyForEndpoint && !selectedModelId && (

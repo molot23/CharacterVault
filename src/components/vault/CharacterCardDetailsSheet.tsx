@@ -200,7 +200,7 @@ export function CharacterCardDetailsSheet({
                 <div className="min-w-0">
 <p className="text-sm font-medium text-fg">{t('vault.lastOpened')}</p>
                   <p className="text-xs text-fg-muted mt-0.5">
-                    {formatRelativeTime(character.lastOpenedAt)}
+                    {formatRelativeTime(character.lastOpenedAt, t)}
                     <span className="text-fg-subtle"> · </span>
                     {formatAbsoluteTime(character.lastOpenedAt)}
                   </p>
@@ -211,7 +211,7 @@ export function CharacterCardDetailsSheet({
                 <div className="min-w-0">
 <p className="text-sm font-medium text-fg">{t('vault.lastEdited')}</p>
                   <p className="text-xs text-fg-muted mt-0.5">
-                    {formatRelativeTime(character.updatedAt)}
+                    {formatRelativeTime(character.updatedAt, t)}
                     <span className="text-fg-subtle"> · </span>
                     {formatAbsoluteTime(character.updatedAt)}
                   </p>

@@ -26,6 +26,7 @@ import {
 } from '../../../db/characterTypes';
 import { SettingsCard } from '../components/SettingsCard';
 import { SliderControl } from '../components/SliderControl';
+import { useI18n } from '../../../i18n';
 import type { SettingsTabProps } from '../types';
 
 const PRESET_CONTEXT_VALUES = new Set<number>(CONTEXT_LENGTH_PRESETS.map((p) => p.value));
@@ -52,6 +53,7 @@ function applyNamedPreset(
 }
 
 export const SamplerTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) => {
+  const { t } = useI18n();
   const settings = draft.sampler;
   // Sticky custom mode so choosing "Custom…" while on a preset value still shows the number input
   const [customMode, setCustomMode] = useState(
@@ -109,7 +111,7 @@ export const SamplerTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) => {
         <div className="mb-3 flex items-center gap-2">
           <Wand2 className="h-4 w-4 text-fg-muted" />
           <span className="text-sm font-semibold text-fg">
-            Quick Presets
+            {t('settings.sampler.quickPresets')}
           </span>
         </div>
         <div className="flex gap-2">
@@ -119,7 +121,7 @@ export const SamplerTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) => {
               onClick={() => handlePreset(preset)}
               className="flex-1 rounded-lg border border-border bg-bg px-3 py-2 text-sm font-medium text-fg-muted transition-colors hover:border-accent/40 hover:bg-accent-soft hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
             >
-              <span className="capitalize">{preset}</span>
+              {t(`settings.sampler.${preset}`)}
             </button>
           ))}
         </div>
@@ -129,13 +131,13 @@ export const SamplerTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) => {
         <div className="flex items-center gap-2 mb-4">
           <Sliders className="w-4 h-4 text-fg-muted" />
           <span className="text-sm font-semibold text-fg-muted">
-            Primary Samplers
+            {t('settings.sampler.primary')}
           </span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <SliderControl
             id="temperature"
-            label="Temperature"
+            label={t('settings.sampler.temperature')}
             icon={<Thermometer className="w-4 h-4" />}
             value={settings.temperature}
             min={0}
@@ -146,7 +148,7 @@ export const SamplerTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) => {
           />
           <SliderControl
             id="topP"
-            label="Top P"
+            label={t('settings.sampler.topP')}
             icon={<Percent className="w-4 h-4" />}
             value={settings.topP}
             min={0}
@@ -157,7 +159,7 @@ export const SamplerTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) => {
           />
           <SliderControl
             id="minP"
-            label="Min P"
+            label={t('settings.sampler.minP')}
             icon={<Filter className="w-4 h-4" />}
             value={settings.minP}
             min={0}
@@ -168,7 +170,7 @@ export const SamplerTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) => {
           />
           <SliderControl
             id="topK"
-            label="Top K"
+            label={t('settings.sampler.topK')}
             icon={<Layers className="w-4 h-4" />}
             value={settings.topK}
             min={0}
@@ -184,13 +186,13 @@ export const SamplerTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) => {
         <div className="flex items-center gap-2 mb-4">
           <Target className="w-4 h-4 text-fg-muted" />
           <span className="text-sm font-semibold text-fg-muted">
-            Secondary Samplers
+            {t('settings.sampler.secondary')}
           </span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <SliderControl
             id="repetitionPenalty"
-            label="Repetition Penalty"
+            label={t('settings.sampler.repetitionPenalty')}
             icon={<Repeat className="w-4 h-4" />}
             value={settings.repetitionPenalty}
             min={1}
@@ -201,7 +203,7 @@ export const SamplerTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) => {
           />
           <SliderControl
             id="maxTokens"
-            label="Max Tokens"
+            label={t('settings.sampler.maxTokens')}
             icon={<Hash className="w-4 h-4" />}
             value={settings.maxTokens}
             min={100}
@@ -215,19 +217,33 @@ export const SamplerTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) => {
               <span className="p-1.5 rounded-md bg-muted text-fg-muted">
                 <BookOpen className="w-4 h-4" />
               </span>
-              Context Length
+              {t('settings.sampler.contextLength')}
             </label>
             <select
               value={isCustomContext ? 'custom' : settings.contextLength}
               onChange={(e) => handleContextSelect(e.target.value)}
               className="w-full px-3 py-2.5 border border-border-strong rounded-lg bg-surface text-fg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all duration-200"
             >
-              {CONTEXT_LENGTH_PRESETS.map((preset) => (
-                <option key={preset.value} value={preset.value}>
-                  {preset.label}
-                </option>
-              ))}
-              <option value="custom">Custom…</option>
+              {CONTEXT_LENGTH_PRESETS.map((preset) => {
+                const keyByValue: Record<number, string> = {
+                  2048: 'preset2k',
+                  4096: 'preset4k',
+                  8192: 'preset8k',
+                  16384: 'preset16k',
+                  32768: 'preset32k',
+                  65536: 'preset64k',
+                  128000: 'preset128k',
+                  256000: 'preset256k',
+                  512000: 'preset512k',
+                  1000000: 'preset1m',
+                };
+                return (
+                  <option key={preset.value} value={preset.value}>
+                    {t(`settings.sampler.${keyByValue[preset.value] ?? 'preset2k'}`)}
+                  </option>
+                );
+              })}
+              <option value="custom">{t('settings.sampler.custom')}</option>
             </select>
             {isCustomContext && (
               <input
@@ -239,14 +255,17 @@ export const SamplerTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) => {
                 onChange={(e) => handleCustomContextChange(e.target.value)}
                 onBlur={handleCustomContextBlur}
                 className="mt-2 w-full px-3 py-2.5 border border-border-strong rounded-lg bg-surface text-fg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all duration-200"
-                aria-label="Custom context length in tokens"
+                aria-label={t('settings.sampler.customAria')}
               />
             )}
             <p className="mt-2 text-xs text-fg-muted">
-              Maximum context window for AI requests
+              {t('settings.sampler.contextHelp')}
               {isCustomContext
-                ? ` (custom: ${CONTEXT_LENGTH_CUSTOM_MIN.toLocaleString()}–${CONTEXT_LENGTH_MAX.toLocaleString()} tokens)`
-                : ' (presets up to 1M, or Custom…)'}
+                ? t('settings.sampler.contextHelpCustom', {
+                    min: CONTEXT_LENGTH_CUSTOM_MIN.toLocaleString(),
+                    max: CONTEXT_LENGTH_MAX.toLocaleString(),
+                  })
+                : t('settings.sampler.contextHelpPresets')}
             </p>
           </div>
         </div>

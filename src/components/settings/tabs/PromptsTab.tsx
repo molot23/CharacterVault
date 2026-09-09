@@ -8,17 +8,17 @@ import { AlertCircle, Bot, ChevronDown, ChevronUp, MessageSquare, Sparkles, Targ
 import type { PromptModelBinding, PromptSettings } from '../../../db/characterTypes';
 import { SettingsCard } from '../components/SettingsCard';
 import { PromptModelBindingSelect } from '../components/PromptModelBindingSelect';
+import { useI18n } from '../../../i18n';
 import type { SettingsTabProps } from '../types';
 
 const PRIMARY_PROMPTS = ['expand', 'rewrite', 'instruct'] as const;
 const POLISH_PROMPTS = ['shorten', 'lengthen', 'vivid', 'emotion', 'grammar'] as const;
 
-function promptLabel(promptType: keyof PromptSettings): string {
-  if (promptType === 'expand') return 'Enhance Prompt';
-  if (promptType === 'rewrite') return 'Rephrase Prompt';
-  if (promptType === 'instruct') return 'Custom Prompt';
-  if (promptType === 'grammar') return 'Fix Prompt';
-  return `${promptType.charAt(0).toUpperCase() + promptType.slice(1)} Prompt`;
+function promptLabel(
+  promptType: keyof PromptSettings,
+  t: (key: string, values?: Record<string, string | number>) => string,
+): string {
+  return t(`settings.prompts.${promptType}`);
 }
 
 interface PromptEditorProps {
@@ -44,6 +44,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
   helpers,
   globalAi,
 }) => {
+  const { t } = useI18n();
   const endpoint = binding?.baseUrl ?? '';
   const isFetching =
     !!helpers && endpoint
@@ -60,7 +61,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
         <span className="flex items-start sm:items-center gap-2 text-sm font-semibold text-fg-muted min-w-0">
           <MessageSquare className="w-4 h-4 text-fg-muted shrink-0 mt-0.5 sm:mt-0" />
           <span className="min-w-0 flex flex-col sm:flex-row sm:items-center sm:gap-2">
-            <span className="capitalize truncate">{promptLabel(promptType)}</span>
+            <span className="capitalize truncate">{promptLabel(promptType, t)}</span>
             {binding?.modelId && (
               <span className="normal-case font-normal text-xs text-fg-muted truncate max-w-full sm:max-w-[14rem]">
                 → {binding.modelId}
@@ -80,30 +81,31 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className="w-full min-h-28 h-32 px-3 py-2.5 border border-border-strong rounded-lg bg-surface text-fg text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 resize-y transition-all duration-200"
-            placeholder={`Enter ${promptType} prompt...`}
+            placeholder={t('settings.prompts.placeholder', { type: promptType })}
           />
           <div className="mt-2 text-xs space-y-1">
             {promptType === 'instruct' ? (
               <span className="text-fg-muted">
-                <span className="font-semibold text-danger">Required:</span> Must contain ${'{text}'}{' '}
-                and ${'{instruction}'}
+                <span className="font-semibold text-danger">{t('settings.prompts.requiredText')}</span>{' '}
+                {t('settings.prompts.mustContainTextAndInstruction')}
               </span>
             ) : (
               <span className="text-fg-muted">
-                <span className="font-semibold text-danger">Required:</span> Must contain ${'{text}'}
+                <span className="font-semibold text-danger">{t('settings.prompts.requiredText')}</span>{' '}
+                {t('settings.prompts.mustContainText')}
               </span>
             )}
           </div>
           {!value.includes('${text}') && (
             <p className="mt-2 text-xs text-danger flex items-start gap-1">
               <AlertCircle className="w-3 h-3 shrink-0 mt-0.5" />
-              Missing required ${'{text}'} placeholder!
+              {t('settings.prompts.missingText')}
             </p>
           )}
           {promptType === 'instruct' && !value.includes('${instruction}') && (
             <p className="mt-2 text-xs text-danger flex items-start gap-1">
               <AlertCircle className="w-3 h-3 shrink-0 mt-0.5" />
-              Missing required ${'{instruction}'} placeholder!
+              {t('settings.prompts.missingInstruction')}
             </p>
           )}
 
@@ -124,6 +126,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 };
 
 export const PromptsTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helpers }) => {
+  const { t } = useI18n();
   const [expandedPrompts, setExpandedPrompts] = useState<Record<string, boolean>>({});
 
   const setPrompt = (key: keyof PromptSettings, value: string) => {
@@ -154,15 +157,14 @@ export const PromptsTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helper
       <SettingsCard>
         <h3 className="text-xs font-bold text-fg-muted uppercase tracking-wider mb-4 flex items-center gap-2">
           <Bot className="w-4 h-4" />
-          Agent
+          {t('settings.prompts.agent')}
         </h3>
         <p className="text-xs text-fg-muted mb-3">
-          Uses the default AI Config model unless you pick another endpoint and model. Keys stay on
-          the AI Config tab.
+          {t('settings.prompts.agentHelp')}
         </p>
         {helpers && (
           <PromptModelBindingSelect
-            heading="Model for Agent"
+            heading={t('settings.binding.agentHeading')}
             bare
             binding={draft.agentModel}
             globalAi={draft.ai}
@@ -183,11 +185,10 @@ export const PromptsTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helper
       <SettingsCard>
         <h3 className="text-xs font-bold text-fg-muted uppercase tracking-wider mb-4 flex items-center gap-2">
           <Target className="w-4 h-4" />
-          Primary Operations
+          {t('settings.prompts.primary')}
         </h3>
         <p className="text-xs text-fg-muted mb-3">
-          Optionally route each prompt to a different endpoint and model. Keys are configured on the
-          AI Config tab.
+          {t('settings.prompts.primaryHelp')}
         </p>
         {PRIMARY_PROMPTS.map((promptType) => (
           <PromptEditor
@@ -208,7 +209,7 @@ export const PromptsTab: React.FC<SettingsTabProps> = ({ draft, setDraft, helper
       <SettingsCard>
         <h3 className="text-xs font-bold text-fg-muted uppercase tracking-wider mb-4 flex items-center gap-2">
           <Sparkles className="w-4 h-4" />
-          Polish Operations (More Menu)
+          {t('settings.prompts.polish')}
         </h3>
         {POLISH_PROMPTS.map((promptType) => (
           <PromptEditor

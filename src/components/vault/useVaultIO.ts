@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { characterImportService } from '../../services/CharacterImportService';
 import { characterExportService } from '../../services/CharacterExportService';
 import { characterDb } from '../../db/CharacterDatabase';
+import { useI18n } from '../../i18n';
 import type { CardExportFormat, VaultTab } from './types';
 import { downloadBlob } from './utils';
 
@@ -32,6 +33,7 @@ export function useVaultIO({
   refreshCharacters,
   importLorebookFile,
 }: UseVaultIOOptions) {
+  const { t } = useI18n();
   const [isImporting, setIsImporting] = useState(false);
   const [isExportingVault, setIsExportingVault] = useState(false);
   const [exportingCardId, setExportingCardId] = useState<string | null>(null);
@@ -60,7 +62,7 @@ export function useVaultIO({
     async (files: File[]) => {
       const fileArray = files.filter(isCharacterImportFile);
       if (fileArray.length === 0) {
-        showStatus('No PNG or JSON character files found.');
+        showStatus(t('vault.io.noCharacterFiles'));
         return;
       }
 
@@ -73,36 +75,44 @@ export function useVaultIO({
           const firstError = result.errors[0];
           showStatus(
             firstError
-              ? `Import failed: ${firstError.filename} — ${firstError.error}`
-              : 'Import failed.',
+              ? t('vault.io.importFailedNamed', {
+                  detail: `${firstError.filename} — ${firstError.error}`,
+                })
+              : t('vault.io.importFailed'),
             7000
           );
         } else if (result.failCount > 0) {
           showStatus(
-            `Imported ${result.successCount} of ${fileArray.length}. ${result.failCount} failed.`,
+            t('vault.io.importedPartial', {
+              success: result.successCount,
+              total: fileArray.length,
+              failed: result.failCount,
+            }),
             7000
           );
         } else {
           showStatus(
             result.successCount === 1
-              ? `Imported “${result.firstImportedName ?? 'character'}”.`
-              : `Imported ${result.successCount} characters.`
+              ? t('vault.io.importedOneCharacter', {
+                  name: result.firstImportedName ?? 'character',
+                })
+              : t('vault.io.importedCharacters', { count: result.successCount })
           );
         }
       } catch {
-        showStatus('Import failed.');
+        showStatus(t('vault.io.importFailed'));
       } finally {
         setIsImporting(false);
       }
     },
-    [refreshCharacters, showStatus]
+    [refreshCharacters, showStatus, t]
   );
 
   const importLorebookFiles = useCallback(
     async (files: File[]) => {
       const fileArray = files.filter(isJsonFile);
       if (fileArray.length === 0) {
-        showStatus('No JSON lorebook files found.');
+        showStatus(t('vault.io.noLorebookFiles'));
         return;
       }
 
@@ -116,35 +126,43 @@ export function useVaultIO({
             successCount += 1;
           } catch (err) {
             errors.push(
-              `${file.name} — ${err instanceof Error ? err.message : 'Import failed'}`,
+              `${file.name} — ${err instanceof Error ? err.message : t('vault.io.importFailed')}`,
             );
           }
         }
 
         if (successCount === 0) {
           showStatus(
-            errors[0] ? `Import failed: ${errors[0]}` : 'Import failed.',
+            errors[0]
+              ? t('vault.io.importFailedNamed', { detail: errors[0] })
+              : t('vault.io.importFailed'),
             7000,
           );
         } else if (errors.length > 0) {
           showStatus(
-            `Imported ${successCount} of ${fileArray.length}. ${errors.length} failed.`,
+            t('vault.io.importedPartial', {
+              success: successCount,
+              total: fileArray.length,
+              failed: errors.length,
+            }),
             7000,
           );
         } else {
           showStatus(
             successCount === 1
-              ? `Imported “${fileArray[0].name.replace(/\.json$/i, '')}”.`
-              : `Imported ${successCount} lorebooks.`,
+              ? t('vault.io.importedOneLorebook', {
+                  name: fileArray[0].name.replace(/\.json$/i, ''),
+                })
+              : t('vault.io.importedLorebooks', { count: successCount }),
           );
         }
       } catch {
-        showStatus('Import failed.');
+        showStatus(t('vault.io.importFailed'));
       } finally {
         setIsImporting(false);
       }
     },
-    [importLorebookFile, showStatus]
+    [importLorebookFile, showStatus, t]
   );
 
   const importFiles = useCallback(
@@ -190,23 +208,32 @@ export function useVaultIO({
         downloadBlob(result.blob, result.filename);
         const parts: string[] = [];
         if (characterCount > 0) {
-          parts.push(`${characterCount} card${characterCount === 1 ? '' : 's'}`);
+          parts.push(
+            t(characterCount === 1 ? 'vault.io.cardSingular' : 'vault.io.cardPlural', {
+              count: characterCount,
+            })
+          );
         }
         if (lorebookCount > 0) {
-          parts.push(`${lorebookCount} lorebook${lorebookCount === 1 ? '' : 's'}`);
+          parts.push(
+            t(
+              lorebookCount === 1 ? 'vault.io.lorebookSingular' : 'vault.io.lorebookPlural',
+              { count: lorebookCount }
+            )
+          );
         }
         showStatus(
           result.error
-            ? `Backup downloaded. ${result.error}`
-            : `Vault backup downloaded (${parts.join(', ')}).`,
+            ? t('vault.io.backupDownloadedPartial', { error: result.error })
+            : t('vault.io.backupDownloaded', { parts: parts.join(', ') }),
           6000
         );
         setBackupConfirmOpen(false);
       } else {
-        showStatus(result.error || 'Failed to export vault backup.', 7000);
+        showStatus(result.error || t('vault.io.backupFailed'), 7000);
       }
     } catch {
-      showStatus('Failed to export vault backup.');
+      showStatus(t('vault.io.backupFailed'));
     } finally {
       setIsExportingVault(false);
     }
@@ -219,7 +246,7 @@ export function useVaultIO({
       try {
         const character = await characterDb.getCharacter(id);
         if (!character) {
-          showStatus('Character not found.');
+          showStatus(t('vault.io.characterNotFound'));
           return;
         }
 
@@ -232,25 +259,23 @@ export function useVaultIO({
           downloadBlob(result.blob, result.filename);
           showStatus(
             format === 'png'
-              ? `Exported “${character.name}” as PNG.`
-              : `Exported “${character.name}” as JSON.`
+              ? t('vault.io.exportedPng', { name: character.name })
+              : t('vault.io.exportedJson', { name: character.name })
           );
         } else {
           showStatus(
             result.error ||
-              (format === 'png'
-                ? 'PNG export failed. Add an image or export as JSON.'
-                : 'Export failed.'),
+              (format === 'png' ? t('vault.io.pngExportFailed') : t('vault.io.exportFailed')),
             7000
           );
         }
       } catch {
-        showStatus('Export failed.');
+        showStatus(t('vault.io.exportFailed'));
       } finally {
         setExportingCardId(null);
       }
     },
-    [exportingCardId, showStatus]
+    [exportingCardId, showStatus, t]
   );
 
   const isImportableDrag = (e: React.DragEvent) => {

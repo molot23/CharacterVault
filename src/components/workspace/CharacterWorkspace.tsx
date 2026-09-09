@@ -514,7 +514,7 @@ function CharacterHeader({
                   ? 'bg-accent text-accent-fg' 
                   : 'text-fg-muted hover:text-accent hover:bg-accent-soft'
               }`}
-              title="Toggle AI Context Panel"
+              title={t('editor.toggleAiContext')}
             >
               <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
             </button>
@@ -525,7 +525,7 @@ function CharacterHeader({
                   ? 'bg-accent text-accent-fg' 
                   : 'text-fg-muted hover:text-accent hover:bg-accent-soft'
               }`}
-              title="Toggle Ask AI Panel"
+              title={t('editor.toggleAskAi')}
             >
               <MessageSquare className="w-4 h-4 md:w-5 md:h-5" />
             </button>
@@ -542,7 +542,7 @@ function CharacterHeader({
                   ? 'bg-accent text-accent-fg' 
                   : 'text-fg-muted hover:text-accent hover:bg-accent-soft'
               }`}
-              title={isContextOpen ? 'Hide AI Context Panel' : 'Show AI Context Panel'}
+              title={isContextOpen ? t('editor.hideAiContext') : t('editor.showAiContext')}
             >
               <PanelLeft className="w-4 h-4" />
             </button>
@@ -553,7 +553,7 @@ function CharacterHeader({
                   ? 'bg-accent text-accent-fg' 
                   : 'text-fg-muted hover:text-accent hover:bg-accent-soft'
               }`}
-              title={isChatOpen ? 'Hide Ask AI Panel' : 'Show Ask AI Panel'}
+              title={isChatOpen ? t('editor.hideAskAi') : t('editor.showAskAi')}
             >
               <PanelRight className="w-4 h-4" />
             </button>

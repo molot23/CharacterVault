@@ -261,13 +261,13 @@ export function CharacterCard({
             <div className="flex items-center gap-1.5 min-w-0">
               <Clock className="w-3 h-3 shrink-0 text-fg-subtle" />
               <span className="truncate">
-                {t('vault.opened', { time: formatRelativeTime(character.lastOpenedAt) })}
+                {t('vault.opened', { time: formatRelativeTime(character.lastOpenedAt, t) })}
               </span>
             </div>
             <div className="flex items-center gap-1.5 min-w-0">
               <Pencil className="w-3 h-3 shrink-0 text-fg-subtle" />
               <span className="truncate">
-                {t('vault.edited', { time: formatRelativeTime(character.updatedAt) })}
+                {t('vault.edited', { time: formatRelativeTime(character.updatedAt, t) })}
               </span>
             </div>
           </button>
@@ -282,7 +282,7 @@ export function CharacterCard({
             <span className="text-accent">{formatTokenEstimate(character.activeTokens)}</span>
             <span className="text-fg-subtle font-normal">/</span>
             <span className="text-fg-muted">{formatTokenEstimate(character.totalTokens)}</span>
-            <span className="text-fg-subtle font-medium normal-case tracking-normal">tok</span>
+            <span className="text-fg-subtle font-medium normal-case tracking-normal">{t('vault.tok')}</span>
           </button>
         </div>
       </div>

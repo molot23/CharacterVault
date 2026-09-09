@@ -6,39 +6,41 @@
 import React from 'react';
 import { Bot, ExternalLink, Languages, MessageSquare, ShieldCheck } from 'lucide-react';
 import type { DefaultChatPanel } from '../../../db/characterTypes';
+import { useI18n } from '../../../i18n';
 import { SettingsCard } from '../components/SettingsCard';
 import { SettingsToggle } from '../components/SettingsToggle';
 import type { SettingsTabProps } from '../types';
 
-const CHAT_PANEL_OPTIONS: Array<{
-  id: DefaultChatPanel;
-  label: string;
-  hint: string;
-  Icon: typeof MessageSquare;
-}> = [
-  { id: 'orion', label: 'Orion', hint: 'Chat that does not write the card', Icon: MessageSquare },
-  { id: 'agent', label: 'Agent', hint: 'Chat that writes the open card or book', Icon: Bot },
-];
-
 export const WorkspaceTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) => {
+  const { t } = useI18n();
+
+  const chatPanelOptions: Array<{
+    id: DefaultChatPanel;
+    label: string;
+    hint: string;
+    Icon: typeof MessageSquare;
+  }> = [
+    { id: 'orion', label: 'Orion', hint: t('settings.workspace.orionHint'), Icon: MessageSquare },
+    { id: 'agent', label: 'Agent', hint: t('settings.workspace.agentHint'), Icon: Bot },
+  ];
+
   return (
     <div className="space-y-5">
       <SettingsCard>
         <h3 className="text-xs font-bold text-fg-muted uppercase tracking-wider mb-4 flex items-center gap-2">
           <MessageSquare className="w-4 h-4" />
-          Chat panel
+          {t('settings.workspace.chatPanel')}
         </h3>
-        <p className="text-sm font-medium text-fg mb-1">Default chat</p>
+        <p className="text-sm font-medium text-fg mb-1">{t('settings.workspace.defaultChat')}</p>
         <p className="text-xs text-fg-muted mb-3 leading-relaxed">
-          Ask AI opens on this chat when you open a character or lorebook. You can still switch in
-          the header.
+          {t('settings.workspace.defaultChatHelp')}
         </p>
         <div
           role="radiogroup"
-          aria-label="Default chat panel"
+          aria-label={t('settings.workspace.defaultChatAria')}
           className="grid grid-cols-2 gap-2"
         >
-          {CHAT_PANEL_OPTIONS.map(({ id, label, hint, Icon }) => {
+          {chatPanelOptions.map(({ id, label, hint, Icon }) => {
             const selected = draft.defaultChatPanel === id;
             return (
               <button
@@ -69,7 +71,7 @@ export const WorkspaceTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) =>
       <SettingsCard>
         <h3 className="text-xs font-bold text-fg-muted uppercase tracking-wider mb-4 flex items-center gap-2">
           <ShieldCheck className="w-4 h-4" />
-          Agent edits
+          {t('settings.workspace.agentEdits')}
         </h3>
         <SettingsToggle
           stacked
@@ -77,22 +79,15 @@ export const WorkspaceTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) =>
           onChange={(checked) =>
             setDraft((prev) => ({ ...prev, requireAgentReview: checked }))
           }
-          label="Review agent edits before applying"
-          description={
-            <>
-              When enabled, the Agent stages its card and lorebook edits instead of writing
-              them directly. You can review each change, edit the proposed text, and approve
-              or deny changes before anything is applied. Snapshots are still taken when you
-              apply.
-            </>
-          }
+          label={t('settings.workspace.reviewEdits')}
+          description={t('settings.workspace.reviewEditsHelp')}
         />
       </SettingsCard>
 
       <SettingsCard>
         <h3 className="text-xs font-bold text-fg-muted uppercase tracking-wider mb-4 flex items-center gap-2">
           <ExternalLink className="w-4 h-4" />
-          Editor links
+          {t('settings.workspace.editorLinks')}
         </h3>
         <SettingsToggle
           stacked
@@ -100,21 +95,15 @@ export const WorkspaceTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) =>
           onChange={(checked) =>
             setDraft((prev) => ({ ...prev, markdownImageOpenLinks: checked }))
           }
-          label="Open Markdown image links on click"
-          description={
-            <>
-              When enabled, clicking image syntax like{' '}
-              <code className="text-xs">![](https://…)</code> opens the URL after a safety warning.
-              Highlighting stays on either way. Drag to select text without opening.
-            </>
-          }
+          label={t('settings.workspace.openMarkdownLinks')}
+          description={t('settings.workspace.openMarkdownLinksHelp')}
         />
       </SettingsCard>
 
       <SettingsCard>
         <h3 className="text-xs font-bold text-fg-muted uppercase tracking-wider mb-4 flex items-center gap-2">
           <Languages className="w-4 h-4" />
-          Spellcheck
+          {t('settings.workspace.spellcheck')}
         </h3>
         <div className="space-y-4">
           <SettingsToggle
@@ -123,14 +112,8 @@ export const WorkspaceTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) =>
             onChange={(checked) =>
               setDraft((prev) => ({ ...prev, spellcheckEnabled: checked }))
             }
-            label="Enable in-editor spellcheck"
-            description={
-              <>
-                Underlines misspellings and offers quick-fix suggestions when hovering over a
-                flagged word. The dictionary is fetched on first use and cached locally for offline
-                access.
-              </>
-            }
+            label={t('settings.workspace.enableSpellcheck')}
+            description={t('settings.workspace.enableSpellcheckHelp')}
           />
 
           <div>
@@ -138,7 +121,7 @@ export const WorkspaceTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) =>
               <span className="p-1.5 rounded-md bg-muted text-fg-muted">
                 <Languages className="w-4 h-4" />
               </span>
-              Language
+              {t('settings.workspace.spellcheckLanguage')}
             </label>
             <select
               value={draft.spellcheckLanguage}
@@ -147,10 +130,10 @@ export const WorkspaceTab: React.FC<SettingsTabProps> = ({ draft, setDraft }) =>
               }
               className="w-full px-3 py-2.5 border border-border-strong rounded-lg bg-surface text-fg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all duration-200"
             >
-              <option value="en">English (en-US)</option>
+              <option value="en">{t('settings.workspace.spellcheckEnglish')}</option>
             </select>
             <p className="mt-2 text-xs text-fg-muted">
-              Additional language packs will appear here as they&apos;re bundled.
+              {t('settings.workspace.spellcheckMoreSoon')}
             </p>
           </div>
         </div>

@@ -4,6 +4,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useI18n } from '../../../i18n';
 import type {
   AIConfig,
   PromptModelBinding,
@@ -103,27 +104,31 @@ function mergeLoadedSampler(sampler: SamplerSettings): SamplerSettings {
   };
 }
 
-export function validatePrompts(prompts: PromptSettings): string | null {
+type Translate = (key: string, values?: Record<string, string | number>) => string;
+
+export function validatePrompts(prompts: PromptSettings, t: Translate): string | null {
   const errors: string[] = [];
 
   if (!prompts.expand.includes('${text}')) {
-    errors.push('Expand prompt must contain ${text}');
+    errors.push(t('settings.validation.expandNeedsText'));
   }
   if (!prompts.rewrite.includes('${text}')) {
-    errors.push('Rewrite prompt must contain ${text}');
+    errors.push(t('settings.validation.rewriteNeedsText'));
   }
   if (!prompts.instruct.includes('${text}')) {
-    errors.push('Instruct prompt must contain ${text}');
+    errors.push(t('settings.validation.instructNeedsText'));
   }
   if (!prompts.instruct.includes('${instruction}')) {
-    errors.push('Instruct prompt must contain ${instruction}');
+    errors.push(t('settings.validation.instructNeedsInstruction'));
   }
 
   const polishPrompts = ['shorten', 'lengthen', 'vivid', 'emotion', 'grammar'] as const;
   for (const promptType of polishPrompts) {
     if (!prompts[promptType].includes('${text}')) {
       errors.push(
-        `${promptType.charAt(0).toUpperCase() + promptType.slice(1)} prompt must contain \${text}`
+        t('settings.validation.polishNeedsText', {
+          name: promptType.charAt(0).toUpperCase() + promptType.slice(1),
+        })
       );
     }
   }
@@ -131,27 +136,27 @@ export function validatePrompts(prompts: PromptSettings): string | null {
   return errors.length > 0 ? errors.join('\n') : null;
 }
 
-export function validatePromptModels(promptModels: PromptModelMap): string | null {
+export function validatePromptModels(promptModels: PromptModelMap, t: Translate): string | null {
   const errors: string[] = [];
   for (const [key, binding] of Object.entries(promptModels)) {
     if (!binding) continue;
     if (!binding.baseUrl?.trim()) {
-      errors.push(`${key}: model binding is missing an endpoint`);
+      errors.push(t('settings.validation.bindingMissingEndpoint', { key }));
     }
     if (!binding.modelId?.trim()) {
-      errors.push(`${key}: model binding is missing a model ID`);
+      errors.push(t('settings.validation.bindingMissingModel', { key }));
     }
   }
   return errors.length > 0 ? errors.join('\n') : null;
 }
 
-export function validateAgentModel(agentModel: PromptModelBinding | undefined): string | null {
+export function validateAgentModel(agentModel: PromptModelBinding | undefined, t: Translate): string | null {
   if (!agentModel) return null;
   if (!agentModel.baseUrl?.trim()) {
-    return 'Agent: model binding is missing an endpoint';
+    return t('settings.validation.agentMissingEndpoint');
   }
   if (!agentModel.modelId?.trim()) {
-    return 'Agent: model binding is missing a model ID';
+    return t('settings.validation.agentMissingModel');
   }
   return null;
 }
@@ -163,6 +168,7 @@ interface UseSettingsDraftOptions {
 }
 
 export function useSettingsDraft({ isOpen, reloadSettings, addToast }: UseSettingsDraftOptions) {
+  const { t } = useI18n();
   const [draft, setDraft] = useState<SettingsDraft>(createDefaultDraft);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -220,7 +226,7 @@ export function useSettingsDraft({ isOpen, reloadSettings, addToast }: UseSettin
       } catch (err) {
         if (cancelled || !mountedRef.current) return;
         console.error('Failed to load settings:', err);
-        addToast('error', 'Failed to load settings');
+        addToast('error', t('settings.loadFailed'));
       } finally {
         if (!cancelled && mountedRef.current) {
           setIsLoading(false);
@@ -232,26 +238,26 @@ export function useSettingsDraft({ isOpen, reloadSettings, addToast }: UseSettin
     return () => {
       cancelled = true;
     };
-  }, [isOpen, addToast]);
+  }, [isOpen, addToast, t]);
 
   const save = useCallback(async () => {
     setIsSaving(true);
 
-    const validationError = validatePrompts(draft.prompts);
+    const validationError = validatePrompts(draft.prompts, t);
     if (validationError) {
       addToast('error', validationError);
       setIsSaving(false);
       return;
     }
 
-    const promptModelsError = validatePromptModels(draft.promptModels);
+    const promptModelsError = validatePromptModels(draft.promptModels, t);
     if (promptModelsError) {
       addToast('error', promptModelsError);
       setIsSaving(false);
       return;
     }
 
-    const agentModelError = validateAgentModel(draft.agentModel);
+    const agentModelError = validateAgentModel(draft.agentModel, t);
     if (agentModelError) {
       addToast('error', agentModelError);
       setIsSaving(false);
@@ -321,14 +327,14 @@ export function useSettingsDraft({ isOpen, reloadSettings, addToast }: UseSettin
       if (!mountedRef.current) return;
       await reloadSettings();
       if (!mountedRef.current) return;
-      addToast('success', 'Settings saved successfully!');
+      addToast('success', t('settings.saved'));
     } catch {
       if (!mountedRef.current) return;
-      addToast('error', 'Failed to save settings');
+      addToast('error', t('settings.saveFailed'));
     } finally {
       if (mountedRef.current) setIsSaving(false);
     }
-  }, [draft, reloadSettings, addToast]);
+  }, [draft, reloadSettings, addToast, t]);
 
   const clearAISettings = useCallback(async () => {
     await characterSettingsService.clearAISettings();

@@ -18,18 +18,20 @@ import { useCharacterContext, useLorebookContext } from '../../context';
 import { lorebookAttachmentService } from '../../services/LorebookAttachmentService';
 import { useI18n } from '../../i18n';
 
-function formatRelative(iso?: string): string {
-  if (!iso) return '—';
+type Translate = (key: string, values?: Record<string, string | number>) => string;
+
+function formatRelative(iso: string | undefined, t: Translate): string {
+  if (!iso) return t('time.emDash');
   const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return '—';
+  if (Number.isNaN(date.getTime())) return t('time.emDash');
   const diff = Date.now() - date.getTime();
   const mins = Math.floor(diff / 60_000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return t('time.justNowLower');
+  if (mins < 60) return t('time.minutesAgo', { count: mins });
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return t('time.hoursAgo', { count: hours });
   const days = Math.floor(hours / 24);
-  if (days < 30) return `${days}d ago`;
+  if (days < 30) return t('time.daysAgo', { count: days });
   return date.toLocaleDateString();
 }
 
@@ -239,7 +241,7 @@ export function LorebookVaultView({
                       : t('vault.entriesMany', { count: item.entryCount })}
                   </span>
                   <span>{t('vault.tokensCount', { count: item.totalTokens.toLocaleString() })}</span>
-                  <span>{t('vault.updated', { time: formatRelative(item.updatedAt) })}</span>
+                  <span>{t('vault.updated', { time: formatRelative(item.updatedAt, t) })}</span>
                 </div>
               </button>
               <LinkedCharactersOnCard

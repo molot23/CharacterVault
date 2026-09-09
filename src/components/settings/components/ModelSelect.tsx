@@ -17,6 +17,7 @@ import {
   X,
 } from 'lucide-react';
 import type { AIModelInfo } from '../../../db/characterTypes';
+import { useI18n } from '../../../i18n';
 import { useFocusOnOpen, useModalSheet } from '../hooks/useModalSheet';
 
 interface ModelSelectProps {
@@ -40,6 +41,7 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
   isFetching,
   disabled = false,
 }) => {
+  const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -80,7 +82,7 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
       <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center">
         <button
           type="button"
-          aria-label="Close model picker"
+          aria-label={t('settings.model.closePicker')}
           className="absolute inset-0 bg-overlay backdrop-blur-sm animate-in fade-in"
           onClick={closePicker}
         />
@@ -94,19 +96,24 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
             <div className="mx-auto sm:hidden w-10 h-1 rounded-full bg-border absolute left-1/2 -translate-x-1/2 top-2" />
             <div className="min-w-0 pt-2 sm:pt-0">
               <h3 id={titleId} className="text-base font-semibold text-fg truncate">
-                Choose model
+                {t('settings.model.choose')}
               </h3>
               <p className="text-xs text-fg-muted mt-0.5">
                 {models.length > 0
-                  ? `${models.length} model${models.length === 1 ? '' : 's'} available`
-                  : 'Fetch models if the list is empty'}
+                  ? t(
+                      models.length === 1
+                        ? 'settings.model.availableOne'
+                        : 'settings.model.availableMany',
+                      { count: models.length },
+                    )
+                  : t('settings.model.fetchIfEmpty')}
               </p>
             </div>
             <button
               type="button"
               onClick={closePicker}
               className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-accent-soft hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 touch-manipulation"
-              aria-label="Close"
+              aria-label={t('settings.model.close')}
             >
               <X className="w-5 h-5" />
             </button>
@@ -130,7 +137,7 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
                     handleSelect(filteredModels[0].id);
                   }
                 }}
-                placeholder="Search models…"
+                placeholder={t('settings.model.searchPlaceholder')}
                 className={`${fieldClass} pl-10 focus:border-accent/40`}
               />
             </div>
@@ -140,12 +147,12 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
             {filteredModels.length === 0 ? (
               <div className="px-2 py-10 text-sm text-fg-muted text-center space-y-1">
                 <p className="font-medium text-fg">
-                  {models.length === 0 ? 'No models loaded' : 'No matches'}
+                  {models.length === 0 ? t('settings.model.noModels') : t('settings.model.noMatches')}
                 </p>
                 <p className="text-xs">
                   {models.length === 0
-                    ? 'Tap Fetch models, then try again.'
-                    : `Nothing matched “${searchTerm}”`}
+                    ? t('settings.model.tapFetch')
+                    : t('settings.model.nothingMatched', { term: searchTerm })}
                 </p>
               </div>
             ) : (
@@ -213,7 +220,7 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
         <span className="p-1.5 rounded-md bg-muted text-fg-muted">
           <Brain className="w-4 h-4" />
         </span>
-        Model
+        {t('settings.model.label')}
       </label>
       <div className="flex flex-col sm:flex-row gap-2">
         <button
@@ -235,7 +242,7 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
                 selectedModelId ? 'font-medium' : 'text-fg-subtle'
               }`}
             >
-              {selectedModel?.name || 'Select a model…'}
+              {selectedModel?.name || t('settings.model.select')}
             </span>
           </span>
           <ChevronDown className="w-4 h-4 text-fg-subtle shrink-0" />
@@ -252,7 +259,7 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
           ) : (
             <RefreshCw className="w-4 h-4" />
           )}
-          Fetch models
+          {t('settings.model.fetch')}
         </button>
       </div>
       {modelPicker}

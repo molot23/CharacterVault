@@ -4,6 +4,7 @@
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useI18n } from '../../../i18n';
 import { AlertCircle, KeyRound, Loader2, RefreshCw, Wallet } from 'lucide-react';
 import {
   NanoGPTProvider,
@@ -259,6 +260,7 @@ export const NanoGPTAccountOverview: React.FC<NanoGPTAccountOverviewProps> = ({
   apiKey,
   enabled,
 }) => {
+  const { t } = useI18n();
   const cachedOnMount = readFreshCache(baseUrl, apiKey);
 
   const [usage, setUsage] = useState<NanoGPTSubscriptionUsage | null>(
@@ -351,7 +353,7 @@ export const NanoGPTAccountOverview: React.FC<NanoGPTAccountOverviewProps> = ({
           ? null
           : usageResult.reason instanceof Error
             ? usageResult.reason.message
-            : 'Failed to load subscription usage';
+            : t('settings.account.nano.loadUsageFailed');
       const nextBalance =
         balanceResult.status === 'fulfilled' ? balanceResult.value : null;
       const nextBalanceError =
@@ -359,7 +361,7 @@ export const NanoGPTAccountOverview: React.FC<NanoGPTAccountOverviewProps> = ({
           ? null
           : balanceResult.reason instanceof Error
             ? balanceResult.reason.message
-            : 'Failed to load balance';
+            : t('settings.account.nano.loadBalanceFailed');
       const nextStatus: LoadStatus =
         usageResult.status === 'fulfilled' || balanceResult.status === 'fulfilled'
           ? 'success'
@@ -438,19 +440,19 @@ export const NanoGPTAccountOverview: React.FC<NanoGPTAccountOverviewProps> = ({
             title={
               cooldownSec > 0
                 ? `Wait ${cooldownSec}s before refreshing again`
-                : 'Refresh balance and subscription usage'
+                : t('settings.account.nano.refreshTitle')
             }
             className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-fg-muted hover:bg-hover rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-accent/50"
             aria-label={
               cooldownSec > 0
-                ? `Refresh available in ${cooldownSec} seconds`
-                : 'Refresh NanoGPT account'
+                ? t('settings.account.refreshAvailableIn', { seconds: cooldownSec })
+                : t('settings.account.nano.refreshAria')
             }
           >
             <RefreshCw
               className={`w-3.5 h-3.5 ${isRefreshing || status === 'loading' ? 'animate-spin' : ''}`}
             />
-            {cooldownSec > 0 ? `Refresh (${cooldownSec}s)` : 'Refresh'}
+            {cooldownSec > 0 ? t('settings.account.refreshCooldown', { seconds: cooldownSec }) : t('settings.account.refresh')}
           </button>
         )}
       </div>
@@ -477,7 +479,7 @@ export const NanoGPTAccountOverview: React.FC<NanoGPTAccountOverviewProps> = ({
               Could not load account info
             </p>
             <p className="text-xs text-danger mt-0.5">
-              {usageError || balanceError || 'Unknown error'}
+              {usageError || balanceError || t('settings.account.unknownError')}
             </p>
             <button
               type="button"
@@ -504,7 +506,7 @@ export const NanoGPTAccountOverview: React.FC<NanoGPTAccountOverviewProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="p-3 rounded-lg bg-surface border border-border min-h-[88px]">
               <div className="text-xs font-medium text-fg-muted mb-1">
-                Balance
+                {t('settings.account.nano.balance')}
               </div>
               {showContent && balance ? (
                 <>
@@ -532,7 +534,7 @@ export const NanoGPTAccountOverview: React.FC<NanoGPTAccountOverviewProps> = ({
 
             <div className="p-3 rounded-lg bg-surface border border-border min-h-[88px]">
               <div className="text-xs font-medium text-fg-muted mb-1">
-                Subscription
+                {t('settings.account.nano.subscription')}
               </div>
               {showContent && usage && badge && subState ? (
                 <>
@@ -541,17 +543,17 @@ export const NanoGPTAccountOverview: React.FC<NanoGPTAccountOverviewProps> = ({
                       className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold border ${badge.className}`}
                     >
                       <span className={`w-1.5 h-1.5 rounded-full ${badge.dot}`} />
-                      {badge.label}
+                      {t(subState === 'active' ? 'settings.account.nano.active' : subState === 'grace' ? 'settings.account.nano.grace' : 'settings.account.nano.notActive')}
                     </span>
                   </div>
                   {subState === 'inactive' && (
                     <p className="text-xs text-fg-muted mt-1.5 leading-relaxed">
-                      No active subscription. Requests use your balance (pay-as-you-go).
+                      {t('settings.account.nano.inactiveHelp')}
                     </p>
                   )}
                   {subState === 'active' && periodEnd && (
                     <div className="text-xs text-fg-muted mt-1.5">
-                      Period ends {periodEnd}
+                      {t('settings.account.nano.periodEnds', { date: periodEnd })}
                     </div>
                   )}
                   {subState === 'grace' && (
@@ -567,7 +569,7 @@ export const NanoGPTAccountOverview: React.FC<NanoGPTAccountOverviewProps> = ({
                       )}
                       {periodEnd && !usage.graceUntil && (
                         <div className="text-xs text-fg-muted mt-1.5">
-                          Period ends {periodEnd}
+                          {t('settings.account.nano.periodEnds', { date: periodEnd })}
                         </div>
                       )}
                     </>

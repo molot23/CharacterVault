@@ -4,6 +4,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import { useI18n } from '../../../i18n';
 import {
   startSignIn,
   exchangeCode,
@@ -31,6 +32,7 @@ export function useNanoGPTSignIn({
   fetchModelsForUrl,
   addToast,
 }: UseNanoGPTSignInOptions) {
+  const { t } = useI18n();
   const [isSigningIn, setIsSigningIn] = useState(false);
   const draftBaseUrlRef = useRef(baseUrl);
   draftBaseUrlRef.current = baseUrl;
@@ -91,15 +93,15 @@ export function useNanoGPTSignIn({
               ...prev,
               ai: { ...prev.ai, availableModels: models },
             }));
-            addToastRef.current('success', `Signed in. Fetched ${models.length} models.`);
+            addToastRef.current('success', t('settings.ai.signedInFetched', { count: models.length }));
           } else {
-            addToastRef.current('success', 'Signed in. Choose a model!');
+            addToastRef.current('success', t('settings.ai.signedInChoose'));
           }
         } catch (err) {
           if (!mountedRef.current) return;
           addToastRef.current(
             'error',
-            err instanceof Error ? err.message : 'NanoGPT sign-in failed.'
+            err instanceof Error ? err.message : t('settings.ai.signInFailed')
           );
         } finally {
           popupRef.current = null;
@@ -139,7 +141,7 @@ export function useNanoGPTSignIn({
           if (!popup || popup.closed) {
             cancelPendingSignIn();
             setIsSigningIn(false);
-            addToastRef.current('error', 'NanoGPT sign-in window was blocked or closed.');
+            addToastRef.current('error', t('settings.ai.signInBlocked'));
             return;
           }
           popupRef.current = popup;
@@ -149,7 +151,7 @@ export function useNanoGPTSignIn({
           setIsSigningIn(false);
           addToastRef.current(
             'error',
-            err instanceof Error ? err.message : 'NanoGPT sign-in failed.'
+            err instanceof Error ? err.message : t('settings.ai.signInFailed')
           );
         });
     },
