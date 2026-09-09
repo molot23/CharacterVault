@@ -1,6 +1,7 @@
 import { Copy, Download, Loader2, Trash2, X } from 'lucide-react';
 import { IconButton } from './IconButton';
 import type { ConfirmTarget } from './types';
+import { useI18n } from '../../i18n';
 
 export interface VaultModalsProps {
   isCreating: boolean;
@@ -37,8 +38,10 @@ export function VaultModals({
   isExportingVault,
   onBackupConfirm,
   onBackupCancel,
-  createPlaceholder = 'Character name...',
+  createPlaceholder,
 }: VaultModalsProps): React.ReactElement {
+  const { t } = useI18n();
+  createPlaceholder = createPlaceholder ?? t('vault.characterName');
   return (
     <>
       {isCreating && (
@@ -56,13 +59,13 @@ export function VaultModals({
               className="flex-1 bg-transparent border-none focus:ring-0 text-base sm:text-lg font-medium placeholder:text-fg-subtle min-w-0 outline-none"
             />
             <div className="flex gap-2 shrink-0">
-              <IconButton icon={X} onClick={onCreateCancel} title="Cancel" />
+              <IconButton icon={X} onClick={onCreateCancel} title={t('common.cancel')} />
               <button
                 type="submit"
                 disabled={!newCharacterName.trim()}
                 className="px-4 py-2 bg-accent text-accent-fg rounded-lg text-sm font-medium disabled:opacity-50 whitespace-nowrap hover:opacity-90 transition-opacity"
               >
-                Create
+                {t('common.create')}
               </button>
             </div>
           </form>
@@ -76,12 +79,10 @@ export function VaultModals({
               <div className="p-3 bg-danger-soft rounded-full">
                 <Trash2 className="w-6 h-6 text-danger" />
               </div>
-              <h3 className="text-lg font-semibold text-fg">Delete Character?</h3>
+              <h3 className="text-lg font-semibold text-fg">{t('vault.deleteCharacterTitle')}</h3>
             </div>
             <p className="text-fg-muted mb-6">
-              Are you sure you want to delete{' '}
-              <span className="font-medium text-fg">{deleteConfirm.name}</span>? This action
-              cannot be undone.
+              {t('vault.deleteCharacterBody', { name: deleteConfirm.name })}
             </p>
             <div className="flex gap-3 justify-end">
               <button
@@ -89,14 +90,14 @@ export function VaultModals({
                 onClick={onDeleteCancel}
                 className="px-4 py-2 text-sm font-medium text-fg-muted hover:bg-accent-soft hover:text-accent rounded-lg transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 type="button"
                 onClick={onDeleteConfirm}
                 className="px-4 py-2 text-sm font-medium text-white bg-danger hover:opacity-90 rounded-lg transition-opacity"
               >
-                Delete
+                {t('common.delete')}
               </button>
             </div>
           </div>
@@ -110,11 +111,10 @@ export function VaultModals({
               <div className="p-3 bg-accent-soft rounded-full">
                 <Copy className="w-6 h-6 text-accent" />
               </div>
-              <h3 className="text-lg font-semibold text-fg">Copy Character?</h3>
+              <h3 className="text-lg font-semibold text-fg">{t('vault.copyCharacterTitle')}</h3>
             </div>
             <p className="text-fg-muted mb-6">
-              Create a copy of{' '}
-              <span className="font-medium text-fg">{copyConfirm.name}</span>?
+              {t('vault.copyCharacterBody', { name: copyConfirm.name })}
             </p>
             <div className="flex gap-3 justify-end">
               <button
@@ -122,14 +122,14 @@ export function VaultModals({
                 onClick={onCopyCancel}
                 className="px-4 py-2 text-sm font-medium text-fg-muted hover:bg-accent-soft hover:text-accent rounded-lg transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 type="button"
                 onClick={onCopyConfirm}
                 className="px-4 py-2 text-sm font-medium bg-accent text-accent-fg hover:opacity-90 rounded-lg transition-opacity"
               >
-                Copy
+                {t('common.copy')}
               </button>
             </div>
           </div>
@@ -143,14 +143,13 @@ export function VaultModals({
               <div className="p-3 bg-accent-soft rounded-full">
                 <Download className="w-6 h-6 text-accent" />
               </div>
-              <h3 className="text-lg font-semibold text-fg">Backup Vault?</h3>
+              <h3 className="text-lg font-semibold text-fg">{t('vault.backupTitle')}</h3>
             </div>
             <p className="text-fg-muted mb-2">
-              Download a ZIP of every character and standalone lorebook in your vault.
+              {t('vault.backupBody')}
             </p>
             <p className="text-sm text-fg-subtle mb-6">
-              Cards with images export as PNG; cards without export as JSON. Lorebooks export
-              as SillyTavern JSON in a lorebooks folder. This may take a moment for large vaults.
+              {t('vault.backupDetail')}
             </p>
             <div className="flex gap-3 justify-end">
               <button
@@ -159,7 +158,7 @@ export function VaultModals({
                 disabled={isExportingVault}
                 className="px-4 py-2.5 sm:py-2 text-sm font-medium text-fg-muted hover:bg-accent-soft hover:text-accent rounded-lg transition-colors disabled:opacity-50 touch-manipulation"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 type="button"
@@ -170,12 +169,12 @@ export function VaultModals({
                 {isExportingVault ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Preparing…
+                    {t('vault.preparing')}
                   </>
                 ) : (
                   <>
                     <Download className="w-4 h-4" />
-                    Download ZIP
+                    {t('vault.downloadZip')}
                   </>
                 )}
               </button>

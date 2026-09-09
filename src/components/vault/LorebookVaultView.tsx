@@ -16,6 +16,7 @@ import {
 import type { CharacterListItem, LorebookListItem } from '../../db/characterTypes';
 import { useCharacterContext, useLorebookContext } from '../../context';
 import { lorebookAttachmentService } from '../../services/LorebookAttachmentService';
+import { useI18n } from '../../i18n';
 
 function formatRelative(iso?: string): string {
   if (!iso) return '—';
@@ -39,13 +40,14 @@ function LinkedCharactersOnCard({
   characters: CharacterListItem[];
   onOpenCharacter: (characterId: string) => void;
 }): React.ReactElement | null {
+  const { t } = useI18n();
   if (characters.length === 0) return null;
 
   const preview = characters.slice(0, 3);
   const extra = characters.length - preview.length;
   const names = characters
     .slice(0, 2)
-    .map((item) => item.name || 'Untitled')
+    .map((item) => item.name || t('vault.untitled'))
     .join(', ');
 
   return (
@@ -56,7 +58,7 @@ function LinkedCharactersOnCard({
           <button
             key={character.id}
             type="button"
-            title={`Open ${character.name || 'character'}`}
+            title={t('vault.openNamed', { name: character.name || t('vault.characters') })}
             onClick={(event) => {
               event.stopPropagation();
               onOpenCharacter(character.id);
@@ -97,6 +99,7 @@ export function LorebookVaultView({
   searchQuery: string;
   onRequestCreate: () => void;
 }): React.ReactElement {
+  const { t } = useI18n();
   const {
     lorebookListItems,
     isLoading,
@@ -164,7 +167,7 @@ export function LorebookVaultView({
   }, [lorebookListItems, searchQuery, linkedByBook]);
 
   const handleDelete = async (item: LorebookListItem) => {
-    if (!window.confirm(`Delete lorebook "${item.name}"? This cannot be undone.`)) return;
+    if (!window.confirm(t('vault.deleteLorebookConfirm', { name: item.name }))) return;
     await deleteLorebook(item.id);
   };
 
@@ -173,8 +176,10 @@ export function LorebookVaultView({
       <div className="flex items-center justify-between text-sm text-fg-muted">
         <span>
           {filtered.length === lorebookListItems.length
-            ? `${lorebookListItems.length} lorebook${lorebookListItems.length === 1 ? '' : 's'}`
-            : `${filtered.length} of ${lorebookListItems.length}`}
+            ? lorebookListItems.length === 1
+              ? t('vault.lorebookCountOne', { count: lorebookListItems.length })
+              : t('vault.lorebookCount', { count: lorebookListItems.length })
+            : t('vault.filteredLorebooks', { filtered: filtered.length, total: lorebookListItems.length })}
         </span>
       </div>
 
@@ -186,11 +191,10 @@ export function LorebookVaultView({
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border px-6 py-16 text-center">
           <Book className="mb-3 h-12 w-12 text-fg-subtle opacity-50" />
           <p className="text-sm font-medium text-fg-muted">
-            {searchQuery ? 'No lorebooks match your search' : 'No lorebooks yet'}
+            {searchQuery ? t('vault.noLorebooksMatch') : t('vault.noLorebooks')}
           </p>
           <p className="mt-1 max-w-sm text-xs text-fg-subtle">
-            Create a standalone world info book or import a SillyTavern lorebook JSON. Books are not
-            tied to a character unless you attach them later.
+            {t('vault.emptyLorebooksHint')}
           </p>
           {!searchQuery && (
             <button
@@ -199,7 +203,7 @@ export function LorebookVaultView({
               className="mt-4 inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-medium text-accent-fg"
             >
               <Plus className="h-4 w-4" />
-              New Lorebook
+              {t('vault.newLorebook')}
             </button>
           )}
         </div>
@@ -224,16 +228,18 @@ export function LorebookVaultView({
                       {item.name}
                     </h3>
                     <p className="mt-0.5 line-clamp-2 text-xs text-fg-muted">
-                      {item.description || 'No description'}
+                      {item.description || t('importPage.noDescription')}
                     </p>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-fg-subtle">
                   <span>
-                    {item.entryCount} entr{item.entryCount === 1 ? 'y' : 'ies'}
+                    {item.entryCount === 1
+                      ? t('vault.entriesOne', { count: item.entryCount })
+                      : t('vault.entriesMany', { count: item.entryCount })}
                   </span>
-                  <span>{item.totalTokens.toLocaleString()} tokens</span>
-                  <span>Updated {formatRelative(item.updatedAt)}</span>
+                  <span>{t('vault.tokensCount', { count: item.totalTokens.toLocaleString() })}</span>
+                  <span>{t('vault.updated', { time: formatRelative(item.updatedAt) })}</span>
                 </div>
               </button>
               <LinkedCharactersOnCard
@@ -245,15 +251,15 @@ export function LorebookVaultView({
                   type="button"
                   onClick={() => void exportLorebook(item.id)}
                   className="rounded-lg p-2 text-fg-muted hover:bg-hover hover:text-fg"
-                  title="Export"
+                  title={t('common.export')}
                 >
                   <Download className="h-3.5 w-3.5" />
                 </button>
                 <button
                   type="button"
-                  onClick={() => void duplicateLorebook(item.id, `${item.name} (Copy)`)}
+                  onClick={() => void duplicateLorebook(item.id, `${item.name} (${t('vault.copySuffix')})`)}
                   className="rounded-lg p-2 text-fg-muted hover:bg-hover hover:text-fg"
-                  title="Duplicate"
+                  title={t('common.duplicate')}
                 >
                   <Copy className="h-3.5 w-3.5" />
                 </button>
@@ -261,7 +267,7 @@ export function LorebookVaultView({
                   type="button"
                   onClick={() => void handleDelete(item)}
                   className="ml-auto rounded-lg p-2 text-fg-muted hover:bg-danger-soft hover:text-danger"
-                  title="Delete"
+                  title={t('common.delete')}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>

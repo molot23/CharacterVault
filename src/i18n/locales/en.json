@@ -1,0 +1,424 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "back": "Back",
+    "close": "Close",
+    "create": "Create",
+    "copy": "Copy",
+    "duplicate": "Duplicate",
+    "import": "Import",
+    "export": "Export",
+    "settings": "Settings",
+    "search": "Search",
+    "next": "Next",
+    "previous": "Previous",
+    "loading": "Loading…",
+    "language": "Language",
+    "english": "English",
+    "simplifiedChinese": "简体中文"
+  },
+  "tutorial": {
+    "skip": "Skip",
+    "next": "Next",
+    "back": "Back",
+    "getStarted": "Get Started",
+    "start": "Start",
+    "integration": "SillyTavern integration! Import cards directly!",
+    "steps": {
+      "welcome": {
+        "title": "Welcome to CharacterVault",
+        "subtitle": "Character cards and lorebooks, in the browser",
+        "description": "CharacterVault is your workspace for SillyTavern-compatible V2 and V3 character cards and World Info lorebooks. Cards and books are stored locally in your browser. No account is required for core use.",
+        "features": {
+          "one": {
+            "label": "Your vault",
+            "detail": "Two libraries on the home screen (Characters and Lorebooks) with search by name or tags"
+          },
+          "two": {
+            "label": "Tabbed editor",
+            "detail": "Dedicated tabs for every card field, with auto-save as you type"
+          },
+          "three": {
+            "label": "AI when you want it",
+            "detail": "Toolbar, Orion chat, and an Agent that can write the open card or book, after you add a provider in Settings"
+          }
+        }
+      },
+      "vault": {
+        "title": "Your vault",
+        "subtitle": "Characters, lorebooks, and ways to start",
+        "description": "The home screen has a Characters tab and a Lorebooks tab. Search, import existing files, create a blank item, or generate a card with AI Create. You can also drag and drop files onto the vault.",
+        "features": {
+          "one": {
+            "label": "Import",
+            "detail": "PNG cards with embedded data, character JSON, or lorebook JSON. Multiple files and drag-and-drop are supported"
+          },
+          "two": {
+            "label": "New / AI Create",
+            "detail": "Start from a blank template, or open AI Creation Studio from the header to generate a card from a concept or tags"
+          },
+          "three": {
+            "label": "Backup",
+            "detail": "Download a ZIP of your characters and lorebooks from the vault header"
+          },
+          "four": {
+            "label": "SillyTavern extension",
+            "detail": "Install the companion extension and export choosing “CharacterVault” to send cards here"
+          }
+        }
+      },
+      "editor": {
+        "title": "Edit in sections",
+        "subtitle": "Every field has its own tab",
+        "description": "Open a character to enter the workspace. Tabs cover name, description, personality, scenario, greetings, examples, system prompt, lorebook, and more. Changes save automatically. Each text section uses a focused editor with search and replace.",
+        "features": {
+          "one": {
+            "label": "Core fields",
+            "detail": "Name, Description, Personality, Scenario, First Message, Greetings, Examples, System Prompt, and the rest of the spec"
+          },
+          "two": {
+            "label": "Image",
+            "detail": "Upload or replace the portrait on the Image tab"
+          },
+          "three": {
+            "label": "Card lorebook",
+            "detail": "Manage World Info entries on the card (keys, priority, position, and content) with the same editor used for vault books"
+          }
+        }
+      },
+      "ai": {
+        "title": "Three AI tools",
+        "subtitle": "Configure a provider, then pick the tool",
+        "description": "Open Settings (gear in the workspace) and add a provider under AI Config. After that you have three tools: an inline toolbar, Orion for chat, and an Agent that can edit the open character or lorebook.",
+        "features": {
+          "one": {
+            "label": "Toolbar",
+            "detail": "Select text in the editor to enhance, rephrase, shorten, lengthen, fix grammar, or run a custom instruction. Streamed results can be accepted or rejected"
+          },
+          "two": {
+            "label": "Orion",
+            "detail": "Open the Ask AI panel to brainstorm and draft in chat. Pin card sections in AI Context. Orion does not change the card unless you copy from it"
+          },
+          "three": {
+            "label": "Agent",
+            "detail": "Toggle Agent in the Ask AI header. It reads and writes the open character or lorebook. Changes land when the run finishes; a snapshot is taken first"
+          }
+        }
+      },
+      "lorebook": {
+        "title": "Lorebook vault",
+        "subtitle": "Standalone World Info, linked if you want",
+        "description": "The Lorebooks tab is a second library for standalone World Info books, each with its own workspace. You can link one book to many characters so edits stay in sync. Card export still uses the lorebook stored on the card.",
+        "features": {
+          "one": {
+            "label": "Library",
+            "detail": "Create, import, export, and duplicate standalone lorebooks from the Lorebooks tab"
+          },
+          "two": {
+            "label": "Link to characters",
+            "detail": "Open in vault from a character to attach a library book. Edits in the lorebook workspace update every linked character"
+          },
+          "three": {
+            "label": "Recursion map",
+            "detail": "Open Map in the lorebook editor to see unlock paths between entries"
+          }
+        }
+      },
+      "snapshots": {
+        "title": "Snapshots and export",
+        "subtitle": "Roll back, then ship",
+        "description": "Use History in the workspace to save snapshots and restore a full card, individual sections, or a standalone lorebook. When you are ready, export a single card or back up the whole vault.",
+        "features": {
+          "one": {
+            "label": "Snapshots",
+            "detail": "Save a point in time and roll back later: full card, selected sections, or the open lorebook"
+          },
+          "two": {
+            "label": "Export",
+            "detail": "Save a PNG with embedded card data, or the raw JSON. Lorebooks export as JSON"
+          },
+          "three": {
+            "label": "Backup",
+            "detail": "From the vault header, download a ZIP of characters and lorebooks"
+          }
+        }
+      },
+      "ready": {
+        "title": "You're all set!",
+        "subtitle": "Start building",
+        "description": "That's the orientation. Replay this walkthrough anytime with the help icon in the header, or open the docs from the book icon. Cards and lorebooks stay in your browser. Optional AI calls go to the provider you configure.",
+        "features": {
+          "one": {
+            "label": "Get started",
+            "detail": "Create a character, import a card, or use AI Create"
+          },
+          "two": {
+            "label": "Replay tutorial",
+            "detail": "Click the help icon (?) in the header bar anytime"
+          },
+          "three": {
+            "label": "Your data",
+            "detail": "Cards and lorebooks stay local. No sign-up for core use. AI is optional and uses your provider"
+          }
+        }
+      }
+    }
+  },
+  "vault": {
+    "characters": "Characters",
+    "lorebooks": "Lorebooks",
+    "library": "Library",
+    "searchCharacters": "Search name or tags...",
+    "searchLorebooks": "Search lorebooks...",
+    "importCharacters": "Import character cards",
+    "importLorebook": "Import lorebook JSON",
+    "newLorebook": "New Lorebook",
+    "characterName": "Character name...",
+    "lorebookName": "Lorebook name...",
+    "dropCharacters": "Drop character cards to import",
+    "dropLorebooks": "Drop lorebooks to import",
+    "multipleCharacterFiles": "PNG or JSON — multiple files supported",
+    "multipleLorebookFiles": "JSON — multiple files supported",
+    "backup": "Backup",
+    "backupVault": "Backup vault",
+    "backupHint": "Download a ZIP backup of characters and lorebooks",
+    "aiCreate": "AI Create",
+    "toggleTheme": "Toggle Theme",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode",
+    "replayTutorial": "Replay Tutorial",
+    "documentation": "Documentation",
+    "moreActions": "More actions",
+    "privacy": "Privacy",
+    "docs": "Docs",
+    "thumbnailNote": "Thumbnails appear blurry to save memory. Your full images are preserved in the card when you export.",
+    "sortName": "Name",
+    "sortRecent": "Recent",
+    "continue": "Continue",
+    "storedLocally": "{{count}} characters stored locally",
+    "filteredCount": "{{filtered}} of {{total}} characters",
+    "noCharacters": "No characters found",
+    "noResults": "No results for “{{query}}”",
+    "emptyHint": "Get started by creating a new character or importing a card.",
+    "importCard": "Import Card",
+    "showing": "Showing {{count}} characters",
+    "showingRange": "Showing {{start}}–{{end}} of {{total}} characters",
+    "pageOf": "Page {{page}} of {{total}}",
+    "previousPage": "Go to previous page",
+    "nextPage": "Go to next page",
+    "goToPage": "Go to page {{page}}",
+    "noImage": "No image",
+    "noTagsDetails": "No tags · click for details",
+    "opened": "Opened {{time}}",
+    "edited": "Edited {{time}}",
+    "cardDetails": "Card details",
+    "detailsFor": "Details for {{name}}",
+    "exportNamed": "Export {{name}}",
+    "duplicateNamed": "Duplicate {{name}}",
+    "deleteNamed": "Delete {{name}}",
+    "exportPng": "Export PNG",
+    "exportJson": "Export JSON",
+    "tokens": "Tokens",
+    "active": "Active",
+    "total": "Total",
+    "tags": "Tags",
+    "noTags": "No tags on this card.",
+    "activity": "Activity",
+    "lastOpened": "Last opened",
+    "lastEdited": "Last edited",
+    "openCharacter": "Open character",
+    "deleteCharacterTitle": "Delete Character?",
+    "deleteCharacterBody": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+    "copyCharacterTitle": "Copy Character?",
+    "copyCharacterBody": "Create a copy of {{name}}?",
+    "backupTitle": "Backup Vault?",
+    "backupBody": "Download a ZIP of every character and standalone lorebook in your vault.",
+    "backupDetail": "Cards with images export as PNG; cards without export as JSON. Lorebooks export as SillyTavern JSON in a lorebooks folder. This may take a moment for large vaults.",
+    "preparing": "Preparing…",
+    "downloadZip": "Download ZIP",
+    "createCharacterFailed": "Failed to create character",
+    "createLorebookFailed": "Failed to create lorebook",
+    "copySuffix": "Copy",
+    "hasThumbnail": "Has thumbnail",
+    "closeDetails": "Close details",
+    "activeTokensHint": "Always-on RP fields (name, description, personality, scenario, system, etc.)",
+    "totalTokensHint": "Active plus greetings, lorebook, and other metadata",
+    "tokenBreakdown": "Click for token breakdown",
+    "lorebookCount": "{{count}} lorebooks",
+    "lorebookCountOne": "{{count}} lorebook",
+    "filteredLorebooks": "{{filtered}} of {{total}}",
+    "noLorebooks": "No lorebooks yet",
+    "noLorebooksMatch": "No lorebooks match your search",
+    "emptyLorebooksHint": "Create a standalone world info book or import a SillyTavern lorebook JSON. Books are not tied to a character unless you attach them later.",
+    "entriesOne": "{{count}} entry",
+    "entriesMany": "{{count}} entries",
+    "tokensCount": "{{count}} tokens",
+    "updated": "Updated {{time}}",
+    "deleteLorebookConfirm": "Delete lorebook \"{{name}}\"? This cannot be undone.",
+    "untitled": "Untitled",
+    "openNamed": "Open {{name}}"
+  },
+  "importPage": {
+    "backToLibrary": "Back to Library",
+    "title": "Import Character",
+    "noDescription": "No description",
+    "noAvatar": "No avatar",
+    "unnamed": "Unnamed Character",
+    "by": "by {{creator}}",
+    "lorebookEntries": "{{count}} lorebook entries",
+    "greetings": "{{count}} greeting(s)",
+    "tags": "{{count}} tags",
+    "description": "Description",
+    "personality": "Personality",
+    "scenario": "Scenario",
+    "version": "Version: {{version}}",
+    "pastePlaceholder": "Paste character JSON here...",
+    "pasteClipboard": "Paste from Clipboard",
+    "loadPreview": "Load Preview",
+    "reading": "Reading clipboard...",
+    "readingHint": "Attempting to read character data from your clipboard automatically.",
+    "clipboardFailed": "Could not read clipboard automatically",
+    "pasteManually": "Please paste the character data manually below.",
+    "preview": "Character Preview",
+    "importCharacter": "Import Character",
+    "importing": "Importing character...",
+    "saving": "Saving to your CharacterVault library.",
+    "success": "Character Imported!",
+    "added": "{{name}} has been added to your library.",
+    "open": "Open Character",
+    "failed": "Import Failed",
+    "failedHint": "Something went wrong while importing the character."
+  },
+  "editor": {
+    "editingCharacter": "Editing character",
+    "backToCharacters": "Back to characters",
+    "snapshots": "Snapshots",
+    "openRevisions": "Open revisions",
+    "settings": "Settings",
+    "exportCharacter": "Export character",
+    "selectSection": "Select Section",
+    "noCharacter": "No character selected",
+    "characterImage": "Character Image",
+    "imageDrop": "Drag and drop an image here\nor click to browse",
+    "changeImage": "Change Image",
+    "uploadImage": "Upload Image",
+    "selectImage": "Please select an image file",
+    "characterNamePlaceholder": "Character name",
+    "tagPlaceholder": "Type a tag and press Enter",
+    "addTag": "Add tag",
+    "removeTag": "Remove {{tag}}",
+    "greetings": "Greetings",
+    "greetingCount": "{{count}} greetings",
+    "greeting": "Greeting {{number}}",
+    "empty": "Empty",
+    "hasContent": "Has content",
+    "deleteGreeting": "Delete greeting",
+    "deleteGreetingConfirm": "Delete greeting {{number}}?",
+    "noGreetings": "No greetings yet",
+    "noGreetingsHint": "Add one to give your character alternate first messages.",
+    "newGreeting": "New Greeting",
+    "selectGreeting": "Select a greeting to edit",
+    "selectGreetingHint": "Or create a new one to get started",
+    "tokens": "{{count}} tokens",
+    "agentWriting": "Agent writing",
+    "sections": {
+      "image": {
+        "label": "Image",
+        "description": "Character avatar image"
+      },
+      "name": {
+        "label": "Name",
+        "description": "Character name"
+      },
+      "description": {
+        "label": "Description",
+        "description": "Character description"
+      },
+      "first_mes": {
+        "label": "First Message",
+        "description": "First greeting message"
+      },
+      "alternate_greetings": {
+        "label": "Greetings",
+        "description": "Alternate greetings"
+      },
+      "mes_example": {
+        "label": "Examples",
+        "description": "Message examples"
+      },
+      "scenario": {
+        "label": "Scenario",
+        "description": "Roleplay scenario"
+      },
+      "physical_description": {
+        "label": "Appearance",
+        "description": "Physical description"
+      },
+      "personality": {
+        "label": "Personality",
+        "description": "Personality traits"
+      },
+      "system_prompt": {
+        "label": "System",
+        "description": "System prompt"
+      },
+      "post_history_instructions": {
+        "label": "Post-History",
+        "description": "Post-history instructions"
+      },
+      "lorebook": {
+        "label": "Lorebook",
+        "description": "Character lore entries"
+      },
+      "creator": {
+        "label": "Creator",
+        "description": "Character creator name"
+      },
+      "creator_notes": {
+        "label": "Creator Notes",
+        "description": "Notes from the creator (supports CSS)"
+      },
+      "tags": {
+        "label": "Tags",
+        "description": "Character tags"
+      },
+      "character_version": {
+        "label": "Version",
+        "description": "Character version identifier"
+      },
+      "extensions": {
+        "label": "Extensions",
+        "description": "Extension data"
+      },
+      "avatar": {
+        "label": "Avatar URL",
+        "description": "Character avatar URL (CharHub, etc.)"
+      }
+    },
+    "extensionJson": "Extension data (JSON format)",
+    "previewCss": "Preview CSS",
+    "stopPreviewingCss": "Stop Previewing CSS",
+    "imageSectionHint": "Use the Image section in the left sidebar to upload a character image."
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Configure application and AI preferences",
+    "close": "Close settings panel",
+    "loading": "Loading settings...",
+    "cancel": "Cancel",
+    "save": "Save Settings",
+    "saved": "Settings saved successfully!",
+    "saveFailed": "Failed to save settings",
+    "language": "UI language",
+    "tabs": {
+      "ai": "AI Config",
+      "sampler": "Sampler",
+      "prompts": "Prompts",
+      "workspace": "Character Workspace",
+      "studio": "Creation Studio",
+      "sections": "Sections"
+    }
+  }
+}

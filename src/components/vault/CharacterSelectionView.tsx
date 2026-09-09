@@ -11,6 +11,7 @@ import { VaultGrid } from './VaultGrid';
 import { VaultModals } from './VaultModals';
 import { LorebookVaultView } from './LorebookVaultView';
 import { CharacterSettingsPanel } from '../settings/CharacterSettingsPanel';
+import { useI18n } from '../../i18n';
 
 const VAULT_TAB_KEY = 'characterVaultActiveTab';
 
@@ -19,6 +20,7 @@ export function CharacterSelectionView({
 }: {
   onReplayTutorial: () => void;
 }): React.ReactElement {
+  const { t } = useI18n();
   const {
     characterListItems,
     isLoading,
@@ -107,7 +109,7 @@ export function CharacterSelectionView({
       setNewItemName('');
       setIsCreating(false);
     } catch {
-      alert(vaultTab === 'lorebooks' ? 'Failed to create lorebook' : 'Failed to create character');
+      alert(vaultTab === 'lorebooks' ? t('vault.createLorebookFailed') : t('vault.createCharacterFailed'));
     }
   };
 
@@ -126,10 +128,10 @@ export function CharacterSelectionView({
           <div className="rounded-2xl border-2 border-dashed border-accent/50 bg-surface/90 px-10 py-8 text-center shadow-2xl">
             <Upload className="mx-auto mb-3 h-10 w-10 text-accent opacity-90" />
             <p className="text-lg font-semibold text-fg">
-              {isLorebooksTab ? 'Drop lorebooks to import' : 'Drop character cards to import'}
+              {isLorebooksTab ? t('vault.dropLorebooks') : t('vault.dropCharacters')}
             </p>
             <p className="mt-1 text-sm text-fg-muted">
-              {isLorebooksTab ? 'JSON — multiple files supported' : 'PNG or JSON — multiple files supported'}
+              {isLorebooksTab ? t('vault.multipleLorebookFiles') : t('vault.multipleCharacterFiles')}
             </p>
           </div>
         </div>
@@ -165,12 +167,12 @@ export function CharacterSelectionView({
         canBackup={io.canBackup}
         fileInputRef={io.fileInputRef}
         onImportChange={io.handleImport}
-        searchPlaceholder={isLorebooksTab ? 'Search lorebooks...' : 'Search name or tags...'}
+        searchPlaceholder={isLorebooksTab ? t('vault.searchLorebooks') : t('vault.searchCharacters')}
         importAccept={
           isLorebooksTab ? '.json,application/json' : '.png,.json,image/png,application/json'
         }
-        importTitle={isLorebooksTab ? 'Import lorebook JSON' : 'Import character cards'}
-        createLabel={isLorebooksTab ? 'New Lorebook' : 'Create'}
+        importTitle={isLorebooksTab ? t('vault.importLorebook') : t('vault.importCharacters')}
+        createLabel={isLorebooksTab ? t('vault.newLorebook') : t('common.create')}
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -186,7 +188,7 @@ export function CharacterSelectionView({
               }`}
             >
               <User className="h-4 w-4" />
-              Characters
+              {t('vault.characters')}
               <span className="text-xs opacity-70">{characterListItems.length}</span>
             </button>
             <button
@@ -199,7 +201,7 @@ export function CharacterSelectionView({
               }`}
             >
               <Book className="h-4 w-4" />
-              Lorebooks
+              {t('vault.lorebooks')}
               <span className="text-xs opacity-70">{lorebookListItems.length}</span>
             </button>
           </div>
@@ -214,7 +216,7 @@ export function CharacterSelectionView({
             setIsCreating(false);
             setNewItemName('');
           }}
-          createPlaceholder={isLorebooksTab ? 'Lorebook name...' : 'Character name...'}
+          createPlaceholder={isLorebooksTab ? t('vault.lorebookName') : t('vault.characterName')}
           deleteConfirm={deleteConfirm}
           onDeleteConfirm={async () => {
             if (deleteConfirm) {
@@ -226,7 +228,7 @@ export function CharacterSelectionView({
           copyConfirm={copyConfirm}
           onCopyConfirm={async () => {
             if (copyConfirm) {
-              await duplicateCharacter(copyConfirm.id, `${copyConfirm.name} (Copy)`);
+              await duplicateCharacter(copyConfirm.id, `${copyConfirm.name} (${t('vault.copySuffix')})`);
               setCopyConfirm(null);
             }
           }}
@@ -254,8 +256,7 @@ export function CharacterSelectionView({
                 />
               </svg>
               <span>
-                Thumbnails appear blurry to save memory. Your full images are preserved in the card when
-                you export.
+                {t('vault.thumbnailNote')}
               </span>
             </div>
 
@@ -318,7 +319,7 @@ export function CharacterSelectionView({
             rel="noopener noreferrer"
             className="hover:text-accent transition-colors"
           >
-            Privacy
+            {t('vault.privacy')}
           </a>
           <span className="text-border" aria-hidden="true">
             ·
@@ -329,7 +330,7 @@ export function CharacterSelectionView({
             rel="noopener noreferrer"
             className="hover:text-accent transition-colors"
           >
-            Docs
+            {t('vault.docs')}
           </a>
           <span className="text-border" aria-hidden="true">
             ·

@@ -11,6 +11,7 @@ import {
 import { formatTokenEstimate } from '../../services/AIService';
 import type { CharacterListItem } from '../../db';
 import { formatRelativeTime } from './utils';
+import { useI18n } from '../../i18n';
 
 function formatAbsoluteTime(timestamp?: string): string {
   if (!timestamp) return '—';
@@ -33,6 +34,7 @@ export function CharacterCardDetailsSheet({
   onClose,
   onOpen,
 }: CharacterCardDetailsSheetProps): React.ReactElement {
+  const { t } = useI18n();
   const tags = character.tags ?? [];
   const hasImage = Boolean(character.thumbnailData);
 
@@ -63,7 +65,7 @@ export function CharacterCardDetailsSheet({
       <button
         type="button"
         className="absolute inset-0 bg-overlay backdrop-blur-sm animate-in fade-in"
-        aria-label="Close details"
+        aria-label={t('vault.closeDetails')}
         onClick={(e) => {
           e.stopPropagation();
           onClose();
@@ -83,13 +85,13 @@ export function CharacterCardDetailsSheet({
             id={`card-details-title-${character.id}`}
             className="text-sm font-semibold text-fg pt-2 sm:pt-0 truncate pr-2"
           >
-            Card details
+            {t('vault.cardDetails')}
           </h2>
           <button
             type="button"
             onClick={onClose}
             className="p-2 rounded-lg text-fg-muted hover:bg-accent-soft hover:text-accent transition-colors touch-manipulation"
-            aria-label="Close"
+            aria-label={t('common.close')}
           >
             <X className="w-4 h-4" />
           </button>
@@ -116,11 +118,11 @@ export function CharacterCardDetailsSheet({
               </p>
               <p className="mt-1.5 inline-flex items-center gap-1 text-xs text-fg-muted">
                 {hasImage ? (
-                  <>Has thumbnail</>
+                  <>{t('vault.hasThumbnail')}</>
                 ) : (
                   <>
                     <ImageOff className="w-3.5 h-3.5" />
-                    No image
+                    {t('vault.noImage')}
                   </>
                 )}
               </p>
@@ -129,14 +131,14 @@ export function CharacterCardDetailsSheet({
 
           <section className="space-y-2">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-fg-subtle">
-              Tokens
+              {t('vault.tokens')}
             </h3>
             <div className="rounded-xl border border-border bg-muted/50 divide-y divide-border">
               <div className="flex items-start justify-between gap-3 p-3">
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-fg">Active</p>
+                  <p className="text-sm font-medium text-fg">{t('vault.active')}</p>
                   <p className="text-xs text-fg-muted mt-0.5">
-                    Always-on RP fields (name, description, personality, scenario, system, etc.)
+                    {t('vault.activeTokensHint')}
                   </p>
                 </div>
                 <div className="text-right shrink-0">
@@ -150,9 +152,9 @@ export function CharacterCardDetailsSheet({
               </div>
               <div className="flex items-start justify-between gap-3 p-3">
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-fg">Total</p>
+                  <p className="text-sm font-medium text-fg">{t('vault.total')}</p>
                   <p className="text-xs text-fg-muted mt-0.5">
-                    Active plus greetings, lorebook, and other metadata
+                    {t('vault.totalTokensHint')}
                   </p>
                 </div>
                 <div className="text-right shrink-0">
@@ -170,10 +172,10 @@ export function CharacterCardDetailsSheet({
           <section className="space-y-2">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-fg-subtle flex items-center gap-1.5">
               <Hash className="w-3.5 h-3.5" />
-              Tags {tags.length > 0 ? `(${tags.length})` : ''}
+              {t('vault.tags')}{tags.length > 0 ? ` (${tags.length})` : ''}
             </h3>
             {tags.length === 0 ? (
-              <p className="text-sm text-fg-muted italic">No tags on this card.</p>
+<p className="text-sm text-fg-muted italic">{t('vault.noTags')}</p>
             ) : (
               <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto">
                 {tags.map((tag) => (
@@ -190,13 +192,13 @@ export function CharacterCardDetailsSheet({
 
           <section className="space-y-2">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-fg-subtle">
-              Activity
+              {t('vault.activity')}
             </h3>
             <div className="rounded-xl border border-border bg-muted/50 space-y-0 divide-y divide-border">
               <div className="flex items-start gap-2.5 p-3">
                 <Clock className="w-4 h-4 text-fg-subtle shrink-0 mt-0.5" />
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-fg">Last opened</p>
+<p className="text-sm font-medium text-fg">{t('vault.lastOpened')}</p>
                   <p className="text-xs text-fg-muted mt-0.5">
                     {formatRelativeTime(character.lastOpenedAt)}
                     <span className="text-fg-subtle"> · </span>
@@ -207,7 +209,7 @@ export function CharacterCardDetailsSheet({
               <div className="flex items-start gap-2.5 p-3">
                 <Pencil className="w-4 h-4 text-fg-subtle shrink-0 mt-0.5" />
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-fg">Last edited</p>
+<p className="text-sm font-medium text-fg">{t('vault.lastEdited')}</p>
                   <p className="text-xs text-fg-muted mt-0.5">
                     {formatRelativeTime(character.updatedAt)}
                     <span className="text-fg-subtle"> · </span>
@@ -224,7 +226,7 @@ export function CharacterCardDetailsSheet({
               onClick={onClose}
               className="flex-1 px-4 py-2.5 text-sm font-medium text-fg-muted border border-border rounded-xl hover:bg-hover transition-colors touch-manipulation"
             >
-              Close
+              {t('common.close')}
             </button>
             <button
               type="button"
@@ -234,7 +236,7 @@ export function CharacterCardDetailsSheet({
               }}
               className="flex-1 px-4 py-2.5 text-sm font-medium bg-accent text-accent-fg rounded-xl hover:opacity-90 transition-opacity touch-manipulation"
             >
-              Open character
+              {t('vault.openCharacter')}
             </button>
           </div>
         </div>

@@ -1,0 +1,424 @@
+{
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "back": "返回",
+    "close": "关闭",
+    "create": "创建",
+    "copy": "复制",
+    "duplicate": "创建副本",
+    "import": "导入",
+    "export": "导出",
+    "settings": "设置",
+    "search": "搜索",
+    "next": "下一步",
+    "previous": "上一页",
+    "loading": "加载中…",
+    "language": "语言",
+    "english": "English",
+    "simplifiedChinese": "简体中文"
+  },
+  "tutorial": {
+    "skip": "跳过",
+    "next": "下一步",
+    "back": "返回",
+    "getStarted": "开始使用",
+    "start": "开始",
+    "integration": "已集成 SillyTavern！可直接导入角色卡！",
+    "steps": {
+      "welcome": {
+        "title": "欢迎使用 CharacterVault",
+        "subtitle": "浏览器中的角色卡与世界书",
+        "description": "CharacterVault 是用于编辑兼容 SillyTavern V2/V3 角色卡和世界书的工作区。角色卡和世界书都存储在本地浏览器中，核心功能无需账户。",
+        "features": {
+          "one": {
+            "label": "你的角色库",
+            "detail": "首页包含角色与世界书两个资料库，可按名称或标签搜索"
+          },
+          "two": {
+            "label": "分页编辑器",
+            "detail": "每个角色卡字段都有独立标签页，输入时自动保存"
+          },
+          "three": {
+            "label": "按需使用 AI",
+            "detail": "在设置中添加服务商后，即可使用工具栏、Orion 聊天和可编辑当前角色卡或世界书的 Agent"
+          }
+        }
+      },
+      "vault": {
+        "title": "你的角色库",
+        "subtitle": "角色、世界书与多种开始方式",
+        "description": "首页包含角色和世界书标签页。你可以搜索、导入现有文件、创建空白项目，或使用 AI 创建生成角色卡；也可以将文件拖放到角色库中。",
+        "features": {
+          "one": {
+            "label": "导入",
+            "detail": "支持内嵌数据的 PNG 角色卡、角色 JSON 或世界书 JSON，并可多选或拖放文件"
+          },
+          "two": {
+            "label": "新建 / AI 创建",
+            "detail": "从空白模板开始，或从顶部进入 AI 创作工作室，通过概念或标签生成角色卡"
+          },
+          "three": {
+            "label": "备份",
+            "detail": "从角色库顶部下载包含角色和世界书的 ZIP 备份"
+          },
+          "four": {
+            "label": "SillyTavern 扩展",
+            "detail": "安装配套扩展，在导出时选择“CharacterVault”即可将角色卡发送到这里"
+          }
+        }
+      },
+      "editor": {
+        "title": "分区编辑",
+        "subtitle": "每个字段都有独立标签页",
+        "description": "打开角色即可进入工作区。标签页涵盖名称、描述、性格、场景、开场白、对话示例、系统提示词、世界书等内容。更改会自动保存，每个文本分区都提供专注编辑器及查找替换功能。",
+        "features": {
+          "one": {
+            "label": "核心字段",
+            "detail": "名称、描述、性格、场景、开场白、备选开场、对话示例、系统提示词及规范中的其他字段"
+          },
+          "two": {
+            "label": "图片",
+            "detail": "在图片标签页上传或替换角色立绘"
+          },
+          "three": {
+            "label": "角色世界书",
+            "detail": "使用与资料库世界书相同的编辑器管理角色卡内的世界书条目、关键词、优先级、位置与内容"
+          }
+        }
+      },
+      "ai": {
+        "title": "三种 AI 工具",
+        "subtitle": "配置服务商后选择合适工具",
+        "description": "打开设置（工作区中的齿轮）并在 AI 配置中添加服务商。之后即可使用行内工具栏、Orion 聊天，以及可编辑当前角色或世界书的 Agent。",
+        "features": {
+          "one": {
+            "label": "工具栏",
+            "detail": "选中文本后可增强、改写、缩短、扩写、修正语法或执行自定义指令，并接受或拒绝流式结果"
+          },
+          "two": {
+            "label": "Orion",
+            "detail": "打开询问 AI 面板进行构思和起草，在 AI 上下文中固定角色卡分区；除非手动复制，Orion 不会修改角色卡"
+          },
+          "three": {
+            "label": "Agent",
+            "detail": "在询问 AI 顶部切换到 Agent。它可以读写当前角色或世界书，运行完成时应用更改，并会先创建快照"
+          }
+        }
+      },
+      "lorebook": {
+        "title": "世界书库",
+        "subtitle": "独立世界书，也可按需关联",
+        "description": "世界书标签页是独立世界信息书的第二个资料库，每本书都有自己的工作区。一本书可以关联多个角色并保持同步；导出角色卡时仍使用角色卡内嵌的世界书。",
+        "features": {
+          "one": {
+            "label": "世界书库",
+            "detail": "在世界书标签页创建、导入、导出或复制独立世界书"
+          },
+          "two": {
+            "label": "关联角色",
+            "detail": "从角色中选择“在库中打开”以关联世界书；在世界书工作区中的编辑会同步到所有关联角色"
+          },
+          "three": {
+            "label": "递归地图",
+            "detail": "在世界书编辑器中打开地图，查看条目之间的解锁路径"
+          }
+        }
+      },
+      "snapshots": {
+        "title": "快照与导出",
+        "subtitle": "可以回退，也可以发布",
+        "description": "在工作区中使用历史记录保存快照，并恢复整张角色卡、单个分区或独立世界书。准备好后，可导出单张角色卡或备份整个角色库。",
+        "features": {
+          "one": {
+            "label": "快照",
+            "detail": "保存当前状态并在稍后回退：支持整张角色卡、选定分区或当前世界书"
+          },
+          "two": {
+            "label": "导出",
+            "detail": "保存内嵌角色卡数据的 PNG 或原始 JSON；世界书导出为 JSON"
+          },
+          "three": {
+            "label": "备份",
+            "detail": "从角色库顶部下载包含角色和世界书的 ZIP"
+          }
+        }
+      },
+      "ready": {
+        "title": "一切准备就绪！",
+        "subtitle": "开始创作",
+        "description": "以上就是快速介绍。你可以随时点击顶部的帮助图标重播教程，或点击书本图标打开文档。角色卡和世界书始终保存在浏览器中；可选的 AI 请求会发送到你配置的服务商。",
+        "features": {
+          "one": {
+            "label": "开始使用",
+            "detail": "创建角色、导入角色卡或使用 AI 创建"
+          },
+          "two": {
+            "label": "重播教程",
+            "detail": "随时点击顶部栏中的帮助图标（?）"
+          },
+          "three": {
+            "label": "你的数据",
+            "detail": "角色卡和世界书保存在本地，核心功能无需注册；AI 为可选功能并使用你配置的服务商"
+          }
+        }
+      }
+    }
+  },
+  "vault": {
+    "characters": "角色",
+    "lorebooks": "世界书",
+    "library": "角色库",
+    "searchCharacters": "搜索名称或标签...",
+    "searchLorebooks": "搜索世界书...",
+    "importCharacters": "导入角色卡",
+    "importLorebook": "导入世界书 JSON",
+    "newLorebook": "新建世界书",
+    "characterName": "角色名称...",
+    "lorebookName": "世界书名称...",
+    "dropCharacters": "拖放角色卡以导入",
+    "dropLorebooks": "拖放世界书以导入",
+    "multipleCharacterFiles": "PNG 或 JSON — 支持多个文件",
+    "multipleLorebookFiles": "JSON — 支持多个文件",
+    "backup": "备份",
+    "backupVault": "备份角色库",
+    "backupHint": "下载角色与世界书的 ZIP 备份",
+    "aiCreate": "AI 创建",
+    "toggleTheme": "切换主题",
+    "lightMode": "浅色模式",
+    "darkMode": "深色模式",
+    "replayTutorial": "重播教程",
+    "documentation": "文档",
+    "moreActions": "更多操作",
+    "privacy": "隐私",
+    "docs": "文档",
+    "thumbnailNote": "缩略图会显示得较模糊以节省内存；导出时会保留角色卡中的完整图片。",
+    "sortName": "名称",
+    "sortRecent": "最近使用",
+    "continue": "继续编辑",
+    "storedLocally": "本地存储了 {{count}} 个角色",
+    "filteredCount": "共 {{total}} 个角色，显示 {{filtered}} 个",
+    "noCharacters": "未找到角色",
+    "noResults": "没有与“{{query}}”匹配的结果",
+    "emptyHint": "创建新角色或导入角色卡即可开始。",
+    "importCard": "导入角色卡",
+    "showing": "显示 {{count}} 个角色",
+    "showingRange": "显示第 {{start}}–{{end}} 个，共 {{total}} 个角色",
+    "pageOf": "第 {{page}} 页，共 {{total}} 页",
+    "previousPage": "前往上一页",
+    "nextPage": "前往下一页",
+    "goToPage": "前往第 {{page}} 页",
+    "noImage": "无图片",
+    "noTagsDetails": "无标签 · 点击查看详情",
+    "opened": "打开于 {{time}}",
+    "edited": "编辑于 {{time}}",
+    "cardDetails": "角色卡详情",
+    "detailsFor": "{{name}} 的详情",
+    "exportNamed": "导出 {{name}}",
+    "duplicateNamed": "复制 {{name}}",
+    "deleteNamed": "删除 {{name}}",
+    "exportPng": "导出 PNG",
+    "exportJson": "导出 JSON",
+    "tokens": "Token",
+    "active": "有效内容",
+    "total": "总计",
+    "tags": "标签",
+    "noTags": "此角色卡没有标签。",
+    "activity": "活动",
+    "lastOpened": "最近打开",
+    "lastEdited": "最近编辑",
+    "openCharacter": "打开角色",
+    "deleteCharacterTitle": "删除角色？",
+    "deleteCharacterBody": "确定要删除 {{name}} 吗？此操作无法撤销。",
+    "copyCharacterTitle": "复制角色？",
+    "copyCharacterBody": "要创建 {{name}} 的副本吗？",
+    "backupTitle": "备份角色库？",
+    "backupBody": "下载包含角色库中所有角色和独立世界书的 ZIP。",
+    "backupDetail": "含图片的角色卡导出为 PNG，无图片的导出为 JSON。世界书将以 SillyTavern JSON 形式放入 lorebooks 文件夹。大型角色库可能需要一些时间。",
+    "preparing": "正在准备…",
+    "downloadZip": "下载 ZIP",
+    "createCharacterFailed": "创建角色失败",
+    "createLorebookFailed": "创建世界书失败",
+    "copySuffix": "副本",
+    "hasThumbnail": "有缩略图",
+    "closeDetails": "关闭详情",
+    "activeTokensHint": "始终生效的角色扮演字段（名称、描述、性格、场景、系统提示词等）",
+    "totalTokensHint": "有效内容加上开场白、世界书及其他元数据",
+    "tokenBreakdown": "点击查看 Token 明细",
+    "lorebookCount": "{{count}} 本世界书",
+    "lorebookCountOne": "{{count}} 本世界书",
+    "filteredLorebooks": "{{filtered}} / {{total}}",
+    "noLorebooks": "尚无世界书",
+    "noLorebooksMatch": "没有匹配的世界书",
+    "emptyLorebooksHint": "创建独立世界书，或导入 SillyTavern 世界书 JSON。除非之后关联，否则世界书不会绑定到角色。",
+    "entriesOne": "{{count}} 个条目",
+    "entriesMany": "{{count}} 个条目",
+    "tokensCount": "{{count}} Token",
+    "updated": "更新于 {{time}}",
+    "deleteLorebookConfirm": "删除世界书“{{name}}”？此操作无法撤销。",
+    "untitled": "未命名",
+    "openNamed": "打开 {{name}}"
+  },
+  "importPage": {
+    "backToLibrary": "返回角色库",
+    "title": "导入角色",
+    "noDescription": "暂无描述",
+    "noAvatar": "无头像",
+    "unnamed": "未命名角色",
+    "by": "作者：{{creator}}",
+    "lorebookEntries": "{{count}} 个世界书条目",
+    "greetings": "{{count}} 条开场白",
+    "tags": "{{count}} 个标签",
+    "description": "描述",
+    "personality": "性格",
+    "scenario": "场景",
+    "version": "版本：{{version}}",
+    "pastePlaceholder": "在此粘贴角色 JSON...",
+    "pasteClipboard": "从剪贴板粘贴",
+    "loadPreview": "加载预览",
+    "reading": "正在读取剪贴板...",
+    "readingHint": "正在尝试自动从剪贴板读取角色数据。",
+    "clipboardFailed": "无法自动读取剪贴板",
+    "pasteManually": "请在下方手动粘贴角色数据。",
+    "preview": "角色预览",
+    "importCharacter": "导入角色",
+    "importing": "正在导入角色...",
+    "saving": "正在保存到 CharacterVault 角色库。",
+    "success": "角色导入成功！",
+    "added": "{{name}} 已添加到角色库。",
+    "open": "打开角色",
+    "failed": "导入失败",
+    "failedHint": "导入角色时出现问题。"
+  },
+  "editor": {
+    "editingCharacter": "正在编辑角色",
+    "backToCharacters": "返回角色库",
+    "snapshots": "快照",
+    "openRevisions": "打开修订记录",
+    "settings": "设置",
+    "exportCharacter": "导出角色",
+    "selectSection": "选择分区",
+    "noCharacter": "未选择角色",
+    "characterImage": "角色图片",
+    "imageDrop": "将图片拖放到这里\n或点击浏览",
+    "changeImage": "更换图片",
+    "uploadImage": "上传图片",
+    "selectImage": "请选择图片文件",
+    "characterNamePlaceholder": "角色名称",
+    "tagPlaceholder": "输入标签后按回车",
+    "addTag": "添加标签",
+    "removeTag": "移除 {{tag}}",
+    "greetings": "备选开场",
+    "greetingCount": "{{count}} 条备选开场",
+    "greeting": "备选开场 {{number}}",
+    "empty": "空白",
+    "hasContent": "有内容",
+    "deleteGreeting": "删除备选开场",
+    "deleteGreetingConfirm": "删除备选开场 {{number}}？",
+    "noGreetings": "尚无备选开场",
+    "noGreetingsHint": "添加一条，为角色提供其他开场白。",
+    "newGreeting": "新建备选开场",
+    "selectGreeting": "选择一条备选开场进行编辑",
+    "selectGreetingHint": "也可以新建一条开始编辑",
+    "tokens": "{{count}} Token",
+    "agentWriting": "Agent 正在写入",
+    "sections": {
+      "image": {
+        "label": "图片",
+        "description": "角色头像图片"
+      },
+      "name": {
+        "label": "名称",
+        "description": "角色名称"
+      },
+      "description": {
+        "label": "描述",
+        "description": "角色描述"
+      },
+      "first_mes": {
+        "label": "开场白",
+        "description": "首条开场消息"
+      },
+      "alternate_greetings": {
+        "label": "备选开场",
+        "description": "其他开场白"
+      },
+      "mes_example": {
+        "label": "对话示例",
+        "description": "示例对话"
+      },
+      "scenario": {
+        "label": "场景",
+        "description": "角色扮演场景"
+      },
+      "physical_description": {
+        "label": "外貌",
+        "description": "外貌描述"
+      },
+      "personality": {
+        "label": "性格",
+        "description": "性格特征"
+      },
+      "system_prompt": {
+        "label": "系统提示词",
+        "description": "系统提示词"
+      },
+      "post_history_instructions": {
+        "label": "历史后指令",
+        "description": "历史记录后的指令"
+      },
+      "lorebook": {
+        "label": "世界书",
+        "description": "角色世界书条目"
+      },
+      "creator": {
+        "label": "创作者",
+        "description": "角色创作者名称"
+      },
+      "creator_notes": {
+        "label": "创作备注",
+        "description": "创作者备注（支持 CSS）"
+      },
+      "tags": {
+        "label": "标签",
+        "description": "角色标签"
+      },
+      "character_version": {
+        "label": "版本",
+        "description": "角色版本标识"
+      },
+      "extensions": {
+        "label": "扩展",
+        "description": "扩展数据"
+      },
+      "avatar": {
+        "label": "头像 URL",
+        "description": "角色头像 URL（CharHub 等）"
+      }
+    },
+    "extensionJson": "扩展数据（JSON 格式）",
+    "previewCss": "预览 CSS",
+    "stopPreviewingCss": "停止预览 CSS",
+    "imageSectionHint": "请在左侧边栏的图片分区上传角色图片。"
+  },
+  "settings": {
+    "title": "设置",
+    "subtitle": "配置应用与 AI 偏好",
+    "close": "关闭设置面板",
+    "loading": "正在加载设置...",
+    "cancel": "取消",
+    "save": "保存设置",
+    "saved": "设置已成功保存！",
+    "saveFailed": "保存设置失败",
+    "language": "界面语言",
+    "tabs": {
+      "ai": "AI 配置",
+      "sampler": "采样参数",
+      "prompts": "提示词",
+      "workspace": "角色工作区",
+      "studio": "创作工作室",
+      "sections": "分区"
+    }
+  }
+}

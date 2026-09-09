@@ -16,6 +16,7 @@ import {
 import { StagingPromoBanner } from '../StagingPromoBanner';
 import { IconButton } from './IconButton';
 import { logoSrc } from './utils';
+import { useI18n } from '../../i18n';
 
 export interface VaultHeaderProps {
   searchQuery: string;
@@ -53,11 +54,15 @@ export function VaultHeader({
   canBackup,
   fileInputRef,
   onImportChange,
-  searchPlaceholder = 'Search name or tags...',
+  searchPlaceholder,
   importAccept = '.png,.json,image/png,application/json',
-  importTitle = 'Import',
-  createLabel = 'Create',
+  importTitle,
+  createLabel,
 }: VaultHeaderProps): React.ReactElement {
+  const { t } = useI18n();
+  searchPlaceholder = searchPlaceholder ?? t('vault.searchCharacters');
+  importTitle = importTitle ?? t('common.import');
+  createLabel = createLabel ?? t('common.create');
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const moreButtonRef = useRef<HTMLButtonElement>(null);
   const moreMenuRef = useRef<HTMLDivElement>(null);
@@ -134,7 +139,7 @@ export function VaultHeader({
                   className="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-fg-muted hover:bg-accent-soft hover:text-accent rounded-lg transition-colors disabled:opacity-50"
                 >
                   {isImporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                  Import
+                  {t('common.import')}
                 </button>
 
                 <button
@@ -153,10 +158,10 @@ export function VaultHeader({
                   onClick={onBackupClick}
                   disabled={!canBackup || isExportingVault}
                   className="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-fg-muted hover:bg-accent-soft hover:text-accent rounded-lg transition-colors disabled:opacity-50"
-                  title="Download a ZIP backup of characters and lorebooks"
+                  title={t('vault.backupHint')}
                 >
                   {isExportingVault ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                  Backup
+                  {t('vault.backup')}
                 </button>
 
                 <button
@@ -164,8 +169,8 @@ export function VaultHeader({
                   onClick={onBackupClick}
                   disabled={!canBackup || isExportingVault}
                   className="lg:hidden p-2 text-fg-muted hover:bg-accent-soft hover:text-accent rounded-lg transition-colors disabled:opacity-50"
-                  title="Backup vault"
-                  aria-label="Backup vault"
+                  title={t('vault.backupVault')}
+                  aria-label={t('vault.backupVault')}
                 >
                   {isExportingVault ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                 </button>
@@ -177,14 +182,14 @@ export function VaultHeader({
                   className="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-accent bg-accent-soft border border-accent/30 hover:bg-accent hover:text-accent-fg rounded-xl transition-colors"
                 >
                   <Sparkles className="w-4 h-4" />
-                  AI Create
+                  {t('vault.aiCreate')}
                 </a>
 
                 <a
                   href="#/ai-create"
                   className="lg:hidden p-2 text-accent hover:bg-accent-soft rounded-lg transition-colors"
-                  title="AI Create"
-                  aria-label="AI Create"
+                  title={t('vault.aiCreate')}
+                  aria-label={t('vault.aiCreate')}
                 >
                   <Sparkles className="w-4 h-4" />
                 </a>
@@ -214,21 +219,21 @@ export function VaultHeader({
                   <IconButton
                     icon={Settings}
                     onClick={onOpenSettings}
-                    title="Settings"
+                    title={t('common.settings')}
                   />
                 </div>
 
                 <IconButton
                   icon={isDark ? Sun : Moon}
                   onClick={onToggleTheme}
-                  title="Toggle Theme"
+                  title={t('vault.toggleTheme')}
                 />
 
                 <span className="hidden md:contents">
                   <IconButton
                     icon={HelpCircle}
                     onClick={onReplayTutorial}
-                    title="Replay Tutorial"
+                    title={t('vault.replayTutorial')}
                   />
 
                   <a
@@ -236,8 +241,8 @@ export function VaultHeader({
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-2 rounded-lg transition-all duration-200 active:scale-95 text-fg-muted hover:text-accent hover:bg-accent-soft"
-                    title="Documentation"
-                    aria-label="Documentation"
+                    title={t('vault.documentation')}
+                    aria-label={t('vault.documentation')}
                   >
                     <BookOpen className="w-4 h-4" />
                   </a>
@@ -248,8 +253,8 @@ export function VaultHeader({
                 <a
                   href="#/ai-create"
                   className="p-2 text-accent hover:bg-accent-soft rounded-lg transition-colors"
-                  title="AI Create"
-                  aria-label="AI Create"
+                  title={t('vault.aiCreate')}
+                  aria-label={t('vault.aiCreate')}
                 >
                   <Sparkles className="w-5 h-5" />
                 </a>
@@ -270,8 +275,8 @@ export function VaultHeader({
                     type="button"
                     onClick={() => setIsMoreOpen((open) => !open)}
                     className="p-2 rounded-lg transition-colors text-fg-muted hover:text-accent hover:bg-accent-soft"
-                    title="More actions"
-                    aria-label="More actions"
+                    title={t('vault.moreActions')}
+                    aria-label={t('vault.moreActions')}
                     aria-haspopup="menu"
                     aria-expanded={isMoreOpen}
                   >
@@ -302,7 +307,7 @@ export function VaultHeader({
                         className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-fg hover:bg-accent-soft hover:text-accent disabled:opacity-50"
                       >
                         {isExportingVault ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4 text-fg-subtle" />}
-                        Backup vault
+                        {t('vault.backupVault')}
                       </button>
                       <button
                         type="button"
@@ -311,7 +316,7 @@ export function VaultHeader({
                         className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-fg hover:bg-accent-soft hover:text-accent"
                       >
                         <Settings className="w-4 h-4 text-fg-subtle" />
-                        Settings
+                        {t('common.settings')}
                       </button>
                       <button
                         type="button"
@@ -320,7 +325,7 @@ export function VaultHeader({
                         className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-fg hover:bg-accent-soft hover:text-accent"
                       >
                         {isDark ? <Sun className="w-4 h-4 text-fg-subtle" /> : <Moon className="w-4 h-4 text-fg-subtle" />}
-                        {isDark ? 'Light mode' : 'Dark mode'}
+                        {isDark ? t('vault.lightMode') : t('vault.darkMode')}
                       </button>
                       <button
                         type="button"
@@ -329,7 +334,7 @@ export function VaultHeader({
                         className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-fg hover:bg-accent-soft hover:text-accent"
                       >
                         <HelpCircle className="w-4 h-4 text-fg-subtle" />
-                        Replay tutorial
+                        {t('vault.replayTutorial')}
                       </button>
                       <a
                         href={`${import.meta.env.BASE_URL}docs/`}
@@ -340,7 +345,7 @@ export function VaultHeader({
                         className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-fg hover:bg-accent-soft hover:text-accent"
                       >
                         <BookOpen className="w-4 h-4 text-fg-subtle" />
-                        Documentation
+                        {t('vault.documentation')}
                       </a>
                     </div>
                   )}

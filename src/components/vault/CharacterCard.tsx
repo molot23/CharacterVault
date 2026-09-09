@@ -18,6 +18,7 @@ import type { CharacterListItem } from '../../db';
 import type { CardExportFormat } from './types';
 import { formatRelativeTime } from './utils';
 import { CharacterCardDetailsSheet } from './CharacterCardDetailsSheet';
+import { useI18n } from '../../i18n';
 
 const TAG_CHIP_LIMIT = 3;
 
@@ -49,6 +50,7 @@ export function CharacterCard({
   onExport,
   isExporting = false,
 }: CharacterCardProps): React.ReactElement {
+  const { t } = useI18n();
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
@@ -148,7 +150,7 @@ export function CharacterCard({
             <User className="w-14 h-14 sm:w-16 sm:h-16 opacity-60" />
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wide bg-surface/80 border border-border text-fg-muted">
               <ImageOff className="w-3 h-3" />
-              No image
+              {t('vault.noImage')}
             </span>
           </div>
         )}
@@ -163,8 +165,8 @@ export function CharacterCard({
             type="button"
             onClick={openDetails}
             className={cardActionBtnClass}
-            title="Card details"
-            aria-label={`Details for ${character.name}`}
+            title={t('vault.cardDetails')}
+            aria-label={t('vault.detailsFor', { name: character.name })}
           >
             <Info className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
           </button>
@@ -174,8 +176,8 @@ export function CharacterCard({
             onClick={openExportMenu}
             disabled={isExporting}
             className={cardActionBtnClass}
-            title="Export"
-            aria-label={`Export ${character.name}`}
+            title={t('common.export')}
+            aria-label={t('vault.exportNamed', { name: character.name })}
             aria-expanded={exportMenuOpen}
             aria-haspopup="menu"
           >
@@ -192,8 +194,8 @@ export function CharacterCard({
               onDuplicate(character.id, character.name);
             }}
             className={cardActionBtnClass}
-            title="Duplicate"
-            aria-label={`Duplicate ${character.name}`}
+            title={t('common.duplicate')}
+            aria-label={t('vault.duplicateNamed', { name: character.name })}
           >
             <Copy className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
           </button>
@@ -204,8 +206,8 @@ export function CharacterCard({
               onDelete(character.id, character.name);
             }}
             className={cardActionBtnDangerClass}
-            title="Delete"
-            aria-label={`Delete ${character.name}`}
+            title={t('common.delete')}
+            aria-label={t('vault.deleteNamed', { name: character.name })}
           >
             <Trash2 className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
           </button>
@@ -246,7 +248,7 @@ export function CharacterCard({
               onClick={openDetails}
               className="text-left text-[11px] text-fg-subtle italic hover:text-accent transition-colors touch-manipulation"
             >
-              No tags · click for details
+              {t('vault.noTagsDetails')}
             </button>
           )}
 
@@ -259,13 +261,13 @@ export function CharacterCard({
             <div className="flex items-center gap-1.5 min-w-0">
               <Clock className="w-3 h-3 shrink-0 text-fg-subtle" />
               <span className="truncate">
-                Opened {formatRelativeTime(character.lastOpenedAt)}
+                {t('vault.opened', { time: formatRelativeTime(character.lastOpenedAt) })}
               </span>
             </div>
             <div className="flex items-center gap-1.5 min-w-0">
               <Pencil className="w-3 h-3 shrink-0 text-fg-subtle" />
               <span className="truncate">
-                Edited {formatRelativeTime(character.updatedAt)}
+                {t('vault.edited', { time: formatRelativeTime(character.updatedAt) })}
               </span>
             </div>
           </button>
@@ -275,7 +277,7 @@ export function CharacterCard({
             onClick={openDetails}
             className="inline-flex self-start items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[11px] font-semibold tabular-nums bg-muted text-fg border border-border hover:border-accent/40 hover:bg-accent-soft active:scale-[0.98] transition-all touch-manipulation"
             aria-label={`Show token details for ${character.name}`}
-            title="Click for token breakdown"
+            title={t('vault.tokenBreakdown')}
           >
             <span className="text-accent">{formatTokenEstimate(character.activeTokens)}</span>
             <span className="text-fg-subtle font-normal">/</span>
@@ -289,7 +291,7 @@ export function CharacterCard({
         <div
           ref={exportMenuRef}
           role="menu"
-          aria-label={`Export ${character.name}`}
+          aria-label={t('vault.exportNamed', { name: character.name })}
           className="fixed z-9999 w-44 rounded-xl border border-border bg-surface shadow-xl py-1 animate-in fade-in zoom-in-95"
           style={{ top: menuPosition.top, left: menuPosition.left }}
           onClick={(e) => e.stopPropagation()}
@@ -301,7 +303,7 @@ export function CharacterCard({
             onClick={() => void handleExport('png')}
           >
             <ImageIcon className="w-4 h-4 shrink-0 text-fg-muted" />
-            <span>Export PNG</span>
+            <span>{t('vault.exportPng')}</span>
           </button>
           <button
             type="button"
@@ -310,7 +312,7 @@ export function CharacterCard({
             onClick={() => void handleExport('json')}
           >
             <FileJson className="w-4 h-4 shrink-0 text-fg-muted" />
-            <span>Export JSON</span>
+            <span>{t('vault.exportJson')}</span>
           </button>
         </div>,
         document.body

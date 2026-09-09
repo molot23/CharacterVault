@@ -1,6 +1,7 @@
 import { ArrowUpDown, Play, User } from 'lucide-react';
 import type { CharacterListItem } from '../../db';
 import type { VaultSortMode } from './types';
+import { useI18n } from '../../i18n';
 
 export interface VaultToolbarProps {
   totalCount: number;
@@ -21,16 +22,17 @@ export function VaultToolbar({
   lastActive,
   onContinue,
 }: VaultToolbarProps): React.ReactElement | null {
+  const { t } = useI18n();
   if (totalCount === 0) return null;
 
   return (
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-fg">Library</h2>
+        <h2 className="text-2xl font-bold tracking-tight text-fg">{t('vault.library')}</h2>
         <p className="text-fg-muted text-sm mt-1">
           {searchQuery
-            ? `${filteredCount} of ${totalCount} ${totalCount === 1 ? 'character' : 'characters'}`
-            : `${totalCount} ${totalCount === 1 ? 'character' : 'characters'} stored locally`}
+            ? t('vault.filteredCount', { filtered: filteredCount, total: totalCount })
+            : t('vault.storedLocally', { count: totalCount })}
         </p>
       </div>
 
@@ -46,7 +48,7 @@ export function VaultToolbar({
                 : 'text-fg-muted hover:text-fg hover:bg-accent-soft'
             }`}
           >
-            Name
+            {t('vault.sortName')}
           </button>
           <button
             type="button"
@@ -57,7 +59,7 @@ export function VaultToolbar({
                 : 'text-fg-muted hover:text-fg hover:bg-accent-soft'
             }`}
           >
-            Recent
+            {t('vault.sortRecent')}
           </button>
         </div>
 
@@ -69,7 +71,7 @@ export function VaultToolbar({
           >
             <div className="text-right min-w-0">
               <p className="text-[10px] font-bold text-fg-subtle uppercase tracking-wider">
-                Continue
+                {t('vault.continue')}
               </p>
               <p className="text-sm font-semibold max-w-36 truncate text-fg">
                 {lastActive.name}

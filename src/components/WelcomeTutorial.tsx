@@ -30,6 +30,7 @@ import {
   Archive,
 } from 'lucide-react';
 import './tutorial.css';
+import { useI18n } from '../i18n';
 
 interface TutorialStep {
   id: number;
@@ -41,101 +42,27 @@ interface TutorialStep {
   showSillyTavernCallout?: boolean;
 }
 
-const TUTORIAL_STEPS: TutorialStep[] = [
+const TUTORIAL_STEP_DEFINITIONS: Array<{
+  key: string;
+  accentIcon: React.ElementType;
+  featureIcons: React.ElementType[];
+  showSillyTavernCallout?: boolean;
+}> = [
+  { key: 'welcome', accentIcon: BookOpen, featureIcons: [Users, PenTool, Sparkles] },
   {
-    id: 0,
-    title: 'Welcome to CharacterVault',
-    subtitle: 'Character cards and lorebooks, in the browser',
-    description:
-      'CharacterVault is your workspace for SillyTavern-compatible V2 and V3 character cards and World Info lorebooks. Cards and books are stored locally in your browser. No account is required for core use.',
-    features: [
-      { icon: Users, label: 'Your vault', detail: 'Two libraries on the home screen (Characters and Lorebooks) with search by name or tags' },
-      { icon: PenTool, label: 'Tabbed editor', detail: 'Dedicated tabs for every card field, with auto-save as you type' },
-      { icon: Sparkles, label: 'AI when you want it', detail: 'Toolbar, Orion chat, and an Agent that can write the open card or book, after you add a provider in Settings' },
-    ],
-    accentIcon: BookOpen,
-  },
-  {
-    id: 1,
-    title: 'Your vault',
-    subtitle: 'Characters, lorebooks, and ways to start',
-    description:
-      'The home screen has a Characters tab and a Lorebooks tab. Search, import existing files, create a blank item, or generate a card with AI Create. You can also drag and drop files onto the vault.',
-    features: [
-      { icon: Upload, label: 'Import', detail: 'PNG cards with embedded data, character JSON, or lorebook JSON. Multiple files and drag-and-drop are supported' },
-      { icon: Plus, label: 'New / AI Create', detail: 'Start from a blank template, or open AI Creation Studio from the header to generate a card from a concept or tags' },
-      { icon: Download, label: 'Backup', detail: 'Download a ZIP of your characters and lorebooks from the vault header' },
-      { icon: ExternalLink, label: 'SillyTavern extension', detail: 'Install the companion extension and export choosing "CharacterVault" to send cards here' },
-    ],
+    key: 'vault',
     accentIcon: Upload,
+    featureIcons: [Upload, Plus, Download, ExternalLink],
     showSillyTavernCallout: true,
   },
-  {
-    id: 2,
-    title: 'Edit in sections',
-    subtitle: 'Every field has its own tab',
-    description:
-      'Open a character to enter the workspace. Tabs cover name, description, personality, scenario, greetings, examples, system prompt, lorebook, and more. Changes save automatically. Each text section uses a focused editor with search and replace.',
-    features: [
-      { icon: Type, label: 'Core fields', detail: 'Name, Description, Personality, Scenario, First Message, Greetings, Examples, System Prompt, and the rest of the spec' },
-      { icon: Image, label: 'Image', detail: 'Upload or replace the portrait on the Image tab' },
-      { icon: Book, label: 'Card lorebook', detail: 'Manage World Info entries on the card (keys, priority, position, and content) with the same editor used for vault books' },
-    ],
-    accentIcon: PenTool,
-  },
-  {
-    id: 3,
-    title: 'Three AI tools',
-    subtitle: 'Configure a provider, then pick the tool',
-    description:
-      'Open Settings (gear in the workspace) and add a provider under AI Config. After that you have three tools: an inline toolbar, Orion for chat, and an Agent that can edit the open character or lorebook.',
-    features: [
-      { icon: Zap, label: 'Toolbar', detail: 'Select text in the editor to enhance, rephrase, shorten, lengthen, fix grammar, or run a custom instruction. Streamed results can be accepted or rejected' },
-      { icon: MessageCircle, label: 'Orion', detail: 'Open the Ask AI panel to brainstorm and draft in chat. Pin card sections in AI Context. Orion does not change the card unless you copy from it' },
-      { icon: Bot, label: 'Agent', detail: 'Toggle Agent in the Ask AI header. It reads and writes the open character or lorebook. Changes land when the run finishes; a snapshot is taken first' },
-    ],
-    accentIcon: Sparkles,
-  },
-  {
-    id: 4,
-    title: 'Lorebook vault',
-    subtitle: 'Standalone World Info, linked if you want',
-    description:
-      'The Lorebooks tab is a second library for standalone World Info books, each with its own workspace. You can link one book to many characters so edits stay in sync. Card export still uses the lorebook stored on the card.',
-    features: [
-      { icon: Book, label: 'Library', detail: 'Create, import, export, and duplicate standalone lorebooks from the Lorebooks tab' },
-      { icon: Link, label: 'Link to characters', detail: 'Open in vault from a character to attach a library book. Edits in the lorebook workspace update every linked character' },
-      { icon: Map, label: 'Recursion map', detail: 'Open Map in the lorebook editor to see unlock paths between entries' },
-    ],
-    accentIcon: Book,
-  },
-  {
-    id: 5,
-    title: 'Snapshots and export',
-    subtitle: 'Roll back, then ship',
-    description:
-      'Use History in the workspace to save snapshots and restore a full card, individual sections, or a standalone lorebook. When you are ready, export a single card or back up the whole vault.',
-    features: [
-      { icon: History, label: 'Snapshots', detail: 'Save a point in time and roll back later: full card, selected sections, or the open lorebook' },
-      { icon: Download, label: 'Export', detail: 'Save a PNG with embedded card data, or the raw JSON. Lorebooks export as JSON' },
-      { icon: Archive, label: 'Backup', detail: 'From the vault header, download a ZIP of characters and lorebooks' },
-    ],
-    accentIcon: History,
-  },
-  {
-    id: 6,
-    title: 'You\'re all set!',
-    subtitle: 'Start building',
-    description:
-      'That\'s the orientation. Replay this walkthrough anytime with the help icon in the header, or open the docs from the book icon. Cards and lorebooks stay in your browser. Optional AI calls go to the provider you configure.',
-    features: [
-      { icon: Rocket, label: 'Get started', detail: 'Create a character, import a card, or use AI Create' },
-      { icon: BookOpen, label: 'Replay tutorial', detail: 'Click the help icon (?) in the header bar anytime' },
-      { icon: Users, label: 'Your data', detail: 'Cards and lorebooks stay local. No sign-up for core use. AI is optional and uses your provider' },
-    ],
-    accentIcon: Rocket,
-  },
+  { key: 'editor', accentIcon: PenTool, featureIcons: [Type, Image, Book] },
+  { key: 'ai', accentIcon: Sparkles, featureIcons: [Zap, MessageCircle, Bot] },
+  { key: 'lorebook', accentIcon: Book, featureIcons: [Book, Link, Map] },
+  { key: 'snapshots', accentIcon: History, featureIcons: [History, Download, Archive] },
+  { key: 'ready', accentIcon: Rocket, featureIcons: [Rocket, BookOpen, Users] },
 ];
+
+const FEATURE_KEYS = ['one', 'two', 'three', 'four'];
 
 const STORAGE_KEY = 'charactervault-tutorial-completed';
 
@@ -147,6 +74,20 @@ interface WelcomeTutorialProps {
 }
 
 export function WelcomeTutorial({ onComplete, skipEntranceAnimation = false }: WelcomeTutorialProps): React.ReactElement {
+  const { t } = useI18n();
+  const tutorialSteps: TutorialStep[] = TUTORIAL_STEP_DEFINITIONS.map((definition, id) => ({
+    id,
+    title: t(`tutorial.steps.${definition.key}.title`),
+    subtitle: t(`tutorial.steps.${definition.key}.subtitle`),
+    description: t(`tutorial.steps.${definition.key}.description`),
+    features: definition.featureIcons.map((icon, index) => ({
+      icon,
+      label: t(`tutorial.steps.${definition.key}.features.${FEATURE_KEYS[index]}.label`),
+      detail: t(`tutorial.steps.${definition.key}.features.${FEATURE_KEYS[index]}.detail`),
+    })),
+    accentIcon: definition.accentIcon,
+    showSillyTavernCallout: definition.showSillyTavernCallout,
+  }));
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
   const [isAnimating, setIsAnimating] = useState(false);
@@ -159,9 +100,9 @@ export function WelcomeTutorial({ onComplete, skipEntranceAnimation = false }: W
     return () => clearTimeout(timer);
   }, [skipEntranceAnimation]);
 
-  const step = TUTORIAL_STEPS[currentStep];
+  const step = tutorialSteps[currentStep];
   const isFirst = currentStep === 0;
-  const isLast = currentStep === TUTORIAL_STEPS.length - 1;
+  const isLast = currentStep === tutorialSteps.length - 1;
 
   const animateTransition = useCallback((newStep: number, dir: 'next' | 'prev') => {
     if (isAnimating) return;
@@ -242,7 +183,7 @@ export function WelcomeTutorial({ onComplete, skipEntranceAnimation = false }: W
                 onClick={handleSkip}
                 className="absolute top-2 right-10 sm:top-4 sm:right-16 z-20 flex items-center gap-1 px-2 py-1 text-xs font-medium text-fg-subtle hover:text-fg transition-colors rounded-lg hover:bg-hover"
               >
-                <span>Skip</span>
+                <span>{t('tutorial.skip')}</span>
                 <X className="w-3 h-3" />
               </button>
             )}
@@ -256,7 +197,7 @@ export function WelcomeTutorial({ onComplete, skipEntranceAnimation = false }: W
 
             {/* Step indicator pills */}
             <div className="flex items-center gap-1.5 mb-4 sm:mb-6 relative">
-              {TUTORIAL_STEPS.map((_, i) => (
+              {tutorialSteps.map((_, i) => (
                 <div
                   key={i}
                   className={`h-1.5 rounded-full tutorial-dot
@@ -269,7 +210,7 @@ export function WelcomeTutorial({ onComplete, skipEntranceAnimation = false }: W
                 />
               ))}
               <span className="ml-auto text-xs font-medium text-fg-subtle tabular-nums">
-                {currentStep + 1} / {TUTORIAL_STEPS.length}
+                {currentStep + 1} / {tutorialSteps.length}
               </span>
             </div>
 
@@ -332,7 +273,7 @@ export function WelcomeTutorial({ onComplete, skipEntranceAnimation = false }: W
 
                   <Zap className="relative w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 fill-amber-300 shrink-0 drop-shadow-[0_0_6px_rgba(251,191,36,0.6)]" />
                   <span className="relative text-xs sm:text-sm text-amber-50 font-semibold leading-tight">
-                    SillyTavern integration! Import cards directly!
+                    {t('tutorial.integration')}
                   </span>
                   <a
                     href="https://github.com/spaceman2408/SillyTavern-CharacterVaultExport"
@@ -366,7 +307,7 @@ export function WelcomeTutorial({ onComplete, skipEntranceAnimation = false }: W
                 }`}
             >
               <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Back</span>
+              <span className="hidden sm:inline">{t('tutorial.back')}</span>
             </button>
 
             <button
@@ -375,13 +316,13 @@ export function WelcomeTutorial({ onComplete, skipEntranceAnimation = false }: W
             >
               {isLast ? (
                 <>
-                  <span className="hidden sm:inline">Get Started</span>
-                  <span className="sm:hidden">Start</span>
+                  <span className="hidden sm:inline">{t('tutorial.getStarted')}</span>
+                  <span className="sm:hidden">{t('tutorial.start')}</span>
                   <Rocket className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </>
               ) : (
                 <>
-                  Next
+                  {t('tutorial.next')}
                   <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </>
               )}

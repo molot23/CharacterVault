@@ -7,7 +7,6 @@
 import React, { useCallback } from 'react';
 import { useCharacterEditorContext } from '../../context';
 import type { CharacterSection } from '../../db/characterTypes';
-import { CHARACTER_SECTIONS } from '../../db/characterTypes';
 import { GreetingsEditor } from './GreetingsEditor';
 import { LorebookEditor } from './LorebookEditor';
 import { CreatorNotesPreviewModal } from './CreatorNotesPreviewModal';
@@ -16,6 +15,7 @@ import { useAIEditor } from '../../hooks';
 import { creatorNotesExtensions } from '../../editor/extensions';
 import { json } from '@codemirror/lang-json';
 import type { Extension } from '@codemirror/state';
+import { useI18n } from '../../i18n';
 
 interface SectionEditorProps {
   section: CharacterSection;
@@ -53,6 +53,7 @@ function MinimalSectionHeader({ label, description }: MinimalSectionHeaderProps)
 }
 
 function NameFieldEditor({ value, onChange, label, description }: NameFieldEditorProps): React.ReactElement {
+  const { t } = useI18n();
   const [draftName, setDraftName] = React.useState(value);
 
   React.useEffect(() => {
@@ -73,7 +74,7 @@ function NameFieldEditor({ value, onChange, label, description }: NameFieldEdito
         value={draftName}
         onChange={handleChange}
         className="w-full rounded-xl border px-4 py-3 text-base outline-none transition-all focus:ring-2 border-border bg-surface text-fg placeholder:text-fg-subtle focus:border-border-strong focus:ring-accent/20"
-        placeholder="Character name"
+        placeholder={t('editor.characterNamePlaceholder')}
       />
     </div>
   );
@@ -101,6 +102,7 @@ function mergeTags(currentTags: string[], incomingTags: string[]): string[] {
 }
 
 function TagsFieldEditor({ tags, onChange, label, description }: TagsFieldEditorProps): React.ReactElement {
+  const { t } = useI18n();
   const [currentTags, setCurrentTags] = React.useState(tags);
   const [draftTag, setDraftTag] = React.useState('');
 
@@ -172,7 +174,7 @@ function TagsFieldEditor({ tags, onChange, label, description }: TagsFieldEditor
               type="button"
               onClick={() => removeTag(tag)}
               className="rounded-sm text-accent/70 transition-colors hover:text-danger focus:outline-none focus:ring-2 focus:ring-accent/30"
-              aria-label={`Remove ${tag}`}
+              aria-label={t('editor.removeTag', { tag })}
             >
               x
             </button>
@@ -185,7 +187,7 @@ function TagsFieldEditor({ tags, onChange, label, description }: TagsFieldEditor
           onKeyDown={handleKeyDown}
           onPaste={handlePaste}
           className="min-w-36 flex-1 bg-transparent px-1 py-1 text-sm outline-none text-fg placeholder:text-fg-subtle"
-          placeholder={currentTags.length === 0 ? 'Type a tag and press Enter' : 'Add tag'}
+          placeholder={currentTags.length === 0 ? t('editor.tagPlaceholder') : t('editor.addTag')}
         />
       </div>
     </div>
@@ -241,6 +243,7 @@ function getSectionValue(character: { data: { spec: { name: string; description:
  * Uses fixed AI toolbar panel at top of editor - no floating elements, no drag needed
  */
 export function SectionEditor({ section, focusEntry }: SectionEditorProps): React.ReactElement {
+  const { t } = useI18n();
   const {
     currentCharacter,
     updateCharacter,
@@ -287,7 +290,7 @@ export function SectionEditor({ section, focusEntry }: SectionEditorProps): Reac
       void updateSpecField(section, value.split('\n---\n').filter(g => g.trim()));
     } else if (section === 'tags') {
       // Convert comma-separated string to array, trim whitespace
-      void updateSpecField(section, value.split(',').map(t => t.trim()).filter(t => t));
+      void updateSpecField(section, value.split(',').map(tag => tag.trim()).filter(tag => tag));
     } else {
       void updateSpecField(section, value);
     }
@@ -331,10 +334,11 @@ export function SectionEditor({ section, focusEntry }: SectionEditorProps): Reac
 
   // Early return for no character
   if (!currentCharacter) {
-    return <div>No character selected</div>;
+    return <div>{t('editor.noCharacter')}</div>;
   }
 
-  const sectionMeta = CHARACTER_SECTIONS.find(s => s.id === section);
+  const sectionLabel = t(`editor.sections.${section}.label`);
+  const sectionDescription = t(`editor.sections.${section}.description`);
   const isCreatorNotesSection = section === 'creator_notes';
 
   if (section === 'name') {
@@ -342,8 +346,8 @@ export function SectionEditor({ section, focusEntry }: SectionEditorProps): Reac
       <NameFieldEditor
         value={currentValue}
         onChange={(value) => void updateSpecField('name', value)}
-        label={sectionMeta?.label}
-        description={sectionMeta?.description}
+        label={sectionLabel}
+        description={sectionDescription}
       />
     );
   }
@@ -353,8 +357,8 @@ export function SectionEditor({ section, focusEntry }: SectionEditorProps): Reac
       <NameFieldEditor
         value={currentValue}
         onChange={(value) => void updateSpecField('creator', value)}
-        label={sectionMeta?.label}
-        description={sectionMeta?.description}
+        label={sectionLabel}
+        description={sectionDescription}
       />
     );
   }
@@ -364,8 +368,8 @@ export function SectionEditor({ section, focusEntry }: SectionEditorProps): Reac
       <TagsFieldEditor
         tags={currentCharacter.data.spec.tags ?? []}
         onChange={(tags) => void updateSpecField('tags', tags)}
-        label={sectionMeta?.label}
-        description={sectionMeta?.description}
+        label={sectionLabel}
+        description={sectionDescription}
       />
     );
   }
@@ -374,7 +378,7 @@ export function SectionEditor({ section, focusEntry }: SectionEditorProps): Reac
   if (section === 'image') {
     return (
       <div className="h-full flex items-center justify-center text-fg-muted animate-fade-in-slow">
-        <p>Use the Image section in the left sidebar to upload a character image.</p>
+        <p>{t('editor.imageSectionHint')}</p>
       </div>
     );
   }
@@ -385,10 +389,10 @@ export function SectionEditor({ section, focusEntry }: SectionEditorProps): Reac
       <div className="h-full flex flex-col min-h-0 overflow-hidden animate-fade-in-slow">
         <div className="mb-4 shrink-0">
           <h2 className="text-xl font-bold text-fg">
-            {sectionMeta?.label}
+            {sectionLabel}
           </h2>
           <p className="text-sm text-fg-muted">
-            Extension data (JSON format)
+            {t('editor.extensionJson')}
           </p>
         </div>
         <div
@@ -490,10 +494,10 @@ export function SectionEditor({ section, focusEntry }: SectionEditorProps): Reac
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h2 className="text-xl font-bold text-fg">
-              {sectionMeta?.label}
+              {sectionLabel}
             </h2>
             <p className="text-sm text-fg-muted">
-              {sectionMeta?.description}
+              {sectionDescription}
             </p>
           </div>
 
@@ -513,7 +517,7 @@ export function SectionEditor({ section, focusEntry }: SectionEditorProps): Reac
                   : 'border-border bg-surface text-fg-muted hover:bg-accent-soft hover:text-accent'
               }`}
             >
-              {isSplitPreviewOpen ? 'Stop Previewing CSS' : 'Preview CSS'}
+              {isSplitPreviewOpen ? t('editor.stopPreviewingCss') : t('editor.previewCss')}
             </button>
           )}
         </div>

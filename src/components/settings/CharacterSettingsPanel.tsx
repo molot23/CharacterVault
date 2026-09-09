@@ -17,12 +17,14 @@ import type {
   SettingsTabId,
   ToastNotification,
 } from './types';
+import { useI18n } from '../../i18n';
 
 export function CharacterSettingsPanel({
   isOpen,
   onClose,
   reloadSettings: propReloadSettings,
 }: CharacterSettingsPanelProps): React.ReactElement | null {
+  const { t, language, setLanguage } = useI18n();
   const editorContext = React.useContext(CharacterEditorContext);
   const reloadSettings =
     propReloadSettings ?? editorContext?.reloadSettings ?? (async () => {});
@@ -244,10 +246,10 @@ export function CharacterSettingsPanel({
                   id="settings-title"
                   className="truncate text-base font-bold text-fg sm:text-lg"
                 >
-                  AI Settings
+                  {t('settings.title')}
                 </h2>
                 <p className="hidden text-xs text-fg-muted sm:block">
-                  Configure your AI generation preferences
+                  {t('settings.subtitle')}
                 </p>
               </div>
             </div>
@@ -255,7 +257,7 @@ export function CharacterSettingsPanel({
               type="button"
               onClick={onClose}
               className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-muted hover:text-fg focus:outline-none focus-visible:ring-2 focus-visible:ring-border-strong"
-              aria-label="Close settings panel"
+              aria-label={t('settings.close')}
             >
               <X className="h-5 w-5" />
             </button>
@@ -286,7 +288,7 @@ export function CharacterSettingsPanel({
                 >
                   <span className="flex items-center gap-2">
                     <Icon className="w-4 h-4 shrink-0" />
-                    {tab.label}
+                    {t(`settings.tabs.${tab.id}`)}
                   </span>
                   {activeTab === tab.id && (
                     <span className="absolute inset-x-4 bottom-0 h-0.5 rounded-full bg-accent" />
@@ -297,11 +299,25 @@ export function CharacterSettingsPanel({
           </div>
 
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain bg-bg p-4 sm:space-y-6 sm:p-6">
+            <div className="rounded-xl border border-border bg-surface px-4 py-3">
+              <label className="mb-2 block text-sm font-medium text-fg" htmlFor="settings-language">
+                {t('settings.language')}
+              </label>
+              <select
+                id="settings-language"
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as 'en' | 'zh-CN')}
+                className="w-full rounded-lg border border-border-strong bg-bg px-3 py-2.5 text-sm font-medium text-fg focus:outline-none focus:ring-2 focus:ring-accent/50"
+              >
+                <option value="en">{t('common.english')}</option>
+                <option value="zh-CN">{t('common.simplifiedChinese')}</option>
+              </select>
+            </div>
             {isLoading && activeTab !== 'sampler' && (
               <div className="flex items-center justify-center py-12">
                 <div className="flex flex-col items-center gap-3">
                   <Loader2 className="w-8 h-8 animate-spin text-fg-muted" />
-                  <span className="text-sm text-fg-muted">Loading settings...</span>
+                  <span className="text-sm text-fg-muted">{t('settings.loading')}</span>
                 </div>
               </div>
             )}
@@ -317,7 +333,7 @@ export function CharacterSettingsPanel({
               onClick={onClose}
               className="min-h-11 flex-1 rounded-lg px-4 py-2.5 text-sm font-medium text-fg-muted transition-colors hover:bg-muted hover:text-fg focus:outline-none focus-visible:ring-2 focus-visible:ring-border-strong sm:flex-none"
             >
-              Cancel
+              {t('settings.cancel')}
             </button>
             <button
               type="button"
@@ -326,7 +342,7 @@ export function CharacterSettingsPanel({
               className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-fg transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
             >
               {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              Save Settings
+              {t('settings.save')}
             </button>
           </div>
         </div>

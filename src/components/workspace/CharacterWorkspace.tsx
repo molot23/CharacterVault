@@ -59,6 +59,7 @@ import {
   FileJson,
   Image as ImageIcon,
 } from 'lucide-react';
+import { useI18n } from '../../i18n';
 
 interface ToastNotification {
   id: string;
@@ -144,6 +145,7 @@ interface SectionTabsProps {
 }
 
 function SectionTabs({ activeSection, onSectionChange, sections }: SectionTabsProps): React.ReactElement {
+  const { t } = useI18n();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const portalRef = React.useRef<HTMLDivElement>(null);
@@ -202,6 +204,7 @@ function SectionTabs({ activeSection, onSectionChange, sections }: SectionTabsPr
           {sections.map((section) => {
             const Icon = iconMap[section.icon] || FileText;
             const isActive = activeSection === section.id;
+            const label = t(`editor.sections.${section.id}.label`);
             
             return (
               <button
@@ -214,7 +217,7 @@ function SectionTabs({ activeSection, onSectionChange, sections }: SectionTabsPr
                   }`}
               >
                 <Icon className="w-4 h-4" />
-                {section.label}
+                {label}
               </button>
             );
           })}
@@ -230,7 +233,7 @@ function SectionTabs({ activeSection, onSectionChange, sections }: SectionTabsPr
           <div className="flex items-center gap-2">
             <ActiveIcon className="w-4 h-4 text-accent" />
             <span className="font-medium text-fg">
-              {activeSectionData?.label || 'Select Section'}
+              {(activeSectionData ? t(`editor.sections.${activeSectionData.id}.label`) : null) || t('editor.selectSection')}
             </span>
           </div>
           <ChevronDown className={`w-4 h-4 text-fg-muted transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
@@ -244,6 +247,7 @@ function SectionTabs({ activeSection, onSectionChange, sections }: SectionTabsPr
             {sections.map((section) => {
               const Icon = iconMap[section.icon] || FileText;
               const isActive = activeSection === section.id;
+              const label = t(`editor.sections.${section.id}.label`);
               
               return (
                 <button
@@ -262,7 +266,7 @@ function SectionTabs({ activeSection, onSectionChange, sections }: SectionTabsPr
                     }`}
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-accent' : ''}`} />
-                  {section.label}
+                  {label}
                 </button>
               );
             })}
@@ -278,12 +282,13 @@ function SectionTabs({ activeSection, onSectionChange, sections }: SectionTabsPr
  * ImageEditor component - For image section
  */
 function ImageEditor(): React.ReactElement {
+  const { t } = useI18n();
   const { currentCharacter, updateCharacter } = useCharacterEditorContext();
   const [isDragging, setIsDragging] = React.useState(false);
 
   const handleFileSelect = async (file: File) => {
     if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
+      alert(t('editor.selectImage'));
       return;
     }
 
@@ -326,7 +331,7 @@ function ImageEditor(): React.ReactElement {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-fg">Character Image</h2>
+      <h2 className="text-xl font-bold text-fg">{t('editor.characterImage')}</h2>
       
       {/* Image Preview */}
       <div className="flex justify-center">
@@ -357,8 +362,8 @@ function ImageEditor(): React.ReactElement {
               flex flex-col items-center justify-center gap-3 transition-colors duration-200`}
           >
             <Image className="w-16 h-16 text-fg-subtle" />
-            <p className="text-sm text-fg-muted text-center px-4">
-              Drag and drop an image here<br />or click to browse
+            <p className="text-sm text-fg-muted text-center px-4 whitespace-pre-line">
+              {t('editor.imageDrop')}
             </p>
           </div>
         )}
@@ -375,7 +380,7 @@ function ImageEditor(): React.ReactElement {
           />
           <span className="inline-flex items-center gap-2 px-4 py-2 bg-accent hover:opacity-90 text-white rounded-xl font-medium transition-colors duration-200 cursor-pointer">
             <Upload className="w-4 h-4" />
-            {currentCharacter?.imageData ? 'Change Image' : 'Upload Image'}
+            {currentCharacter?.imageData ? t('editor.changeImage') : t('editor.uploadImage')}
           </span>
         </label>
       </div>
@@ -411,6 +416,7 @@ function CharacterHeader({
   isMobile,
   agentRunning = false,
 }: CharacterHeaderProps): React.ReactElement {
+  const { t } = useI18n();
   const { currentCharacter } = useCharacterContext();
 
   if (!currentCharacter) return <></>;
@@ -457,7 +463,7 @@ function CharacterHeader({
         <button
           onClick={onClose}
           className="p-2 text-fg-muted hover:text-accent hover:bg-accent-soft rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent active:scale-95 shrink-0"
-          title="Back to characters"
+          title={t('editor.backToCharacters')}
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -480,7 +486,7 @@ function CharacterHeader({
             </h1>
             <p className={`text-xs ${agentRunning ? 'block' : 'hidden sm:block'}`}>
               <span className={`text-fg-muted ${agentRunning ? 'hidden sm:inline' : ''}`}>
-                Editing character
+                {t('editor.editingCharacter')}
               </span>
               {agentRunning ? (
                 <span
@@ -489,7 +495,7 @@ function CharacterHeader({
                   title="Changes appear when the run finishes. Use Snapshots to roll back."
                   className="text-accent animate-pulse sm:ml-2"
                 >
-                  Agent writing
+                  {t('editor.agentWriting')}
                 </span>
               ) : null}
             </p>
@@ -560,19 +566,19 @@ function CharacterHeader({
           onClick={onOpenRevisions}
           disabled={isOpeningRevisions}
           className="flex items-center gap-2 px-2 md:px-3 py-2 text-sm font-medium text-fg-muted hover:bg-accent-soft hover:text-accent rounded-xl transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50"
-          title="Open revisions"
+          title={t('editor.openRevisions')}
         >
           <History className="w-4 h-4" />
-          <span className="hidden md:inline">Snapshots</span>
+          <span className="hidden md:inline">{t('editor.snapshots')}</span>
         </button>
 
         <button
           onClick={onOpenSettings}
           className="flex items-center gap-2 px-2 md:px-3 py-2 text-sm font-medium text-fg-muted hover:bg-accent-soft hover:text-accent rounded-xl transition-colors duration-200"
-          title="AI Settings"
+          title={t('editor.settings')}
         >
           <Settings className="w-4 h-4" />
-          <span className="hidden md:inline">Settings</span>
+          <span className="hidden md:inline">{t('editor.settings')}</span>
         </button>
         
         {/* Export Dropdown */}
@@ -594,6 +600,7 @@ interface ExportDropdownProps {
 }
 
 function ExportDropdown({ onExportJSON, onExportPNG }: ExportDropdownProps): React.ReactElement {
+  const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const menuRef = React.useRef<HTMLDivElement>(null);
@@ -645,10 +652,10 @@ function ExportDropdown({ onExportJSON, onExportPNG }: ExportDropdownProps): Rea
         ref={buttonRef}
         onClick={handleToggle}
         className="flex items-center gap-2 px-2 md:px-3 py-2 text-sm font-medium text-fg-muted hover:bg-accent-soft hover:text-accent rounded-xl transition-colors duration-200"
-        title="Export character"
+        title={t('editor.exportCharacter')}
       >
         <Download className="w-4 h-4" />
-        <span className="hidden md:inline">Export</span>
+        <span className="hidden md:inline">{t('common.export')}</span>
         <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -663,14 +670,14 @@ function ExportDropdown({ onExportJSON, onExportPNG }: ExportDropdownProps): Rea
             className="flex items-center gap-2 w-full px-4 py-2 text-sm text-fg-muted hover:bg-accent-soft hover:text-accent transition-colors"
           >
             <FileJson className="w-4 h-4" />
-            <span>Export JSON</span>
+            <span>{t('vault.exportJson')}</span>
           </button>
           <button
             onClick={handleExportPNG}
             className="flex items-center gap-2 w-full px-4 py-2 text-sm text-fg-muted hover:bg-accent-soft hover:text-accent transition-colors"
           >
             <ImageIcon className="w-4 h-4" />
-            <span>Export PNG</span>
+            <span>{t('vault.exportPng')}</span>
           </button>
         </div>,
         document.body
@@ -706,6 +713,7 @@ function getIsMobileViewport(): boolean {
 }
 
 function CharacterWorkspaceContent(): React.ReactElement {
+  const { t } = useI18n();
   const { currentCharacter } = useCharacterContext();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -741,7 +749,7 @@ function CharacterWorkspaceContent(): React.ReactElement {
     return (
       <div className="h-dvh w-full flex items-center justify-center">
         <div className="text-center">
-          <p className="text-fg-muted">No character selected</p>
+          <p className="text-fg-muted">{t('editor.noCharacter')}</p>
         </div>
       </div>
     );

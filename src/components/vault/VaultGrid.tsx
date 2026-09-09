@@ -4,6 +4,7 @@ import type { CardExportFormat } from './types';
 import { CharacterCard } from './CharacterCard';
 import { CharacterCardSkeleton } from './CharacterCardSkeleton';
 import { getVisiblePageNumbers } from './utils';
+import { useI18n } from '../../i18n';
 
 export interface VaultGridProps {
   isLoading: boolean;
@@ -38,6 +39,7 @@ export function VaultGrid({
   exportingCardId,
   onImportClick,
 }: VaultGridProps): React.ReactElement {
+  const { t } = useI18n();
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 md:gap-6">
@@ -54,11 +56,11 @@ export function VaultGrid({
         <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-6 border border-border">
           <Users className="w-10 h-10 text-fg-subtle" />
         </div>
-        <h3 className="text-lg font-medium text-fg">No characters found</h3>
+        <h3 className="text-lg font-medium text-fg">{t('vault.noCharacters')}</h3>
         <p className="text-fg-muted mt-2 mb-8 max-w-sm">
           {searchQuery
-            ? `No results for “${searchQuery}”`
-            : 'Get started by creating a new character or importing a card.'}
+            ? t('vault.noResults', { query: searchQuery })
+            : t('vault.emptyHint')}
         </p>
         {!searchQuery && (
           <button
@@ -66,7 +68,7 @@ export function VaultGrid({
             onClick={onImportClick}
             className="px-6 py-2.5 border border-border-strong rounded-xl hover:bg-accent-soft hover:text-accent transition-colors font-medium"
           >
-            Import Card
+            {t('vault.importCard')}
           </button>
         )}
       </div>
@@ -91,11 +93,11 @@ export function VaultGrid({
         type="button"
         onClick={() => goToPage((prev) => Math.max(1, prev - 1))}
         disabled={safeCurrentPage === 1}
-        aria-label="Go to previous page"
+        aria-label={t('vault.previousPage')}
         className="inline-flex items-center gap-1 px-3 py-2 bg-surface border border-border rounded-full hover:border-accent/40 hover:bg-accent-soft hover:text-accent transition-all text-sm font-medium text-fg-muted disabled:opacity-40 disabled:hover:border-border disabled:hover:bg-surface disabled:hover:text-fg-muted"
       >
         <ChevronLeft className="w-4 h-4" />
-        <span className="hidden sm:inline">Previous</span>
+        <span className="hidden sm:inline">{t('common.previous')}</span>
       </button>
       {pageNumbers.map((page, index) =>
         page === 'ellipsis' ? (
@@ -108,7 +110,7 @@ export function VaultGrid({
             type="button"
             onClick={() => goToPage(page)}
             disabled={page === safeCurrentPage}
-            aria-label={`Go to page ${page}`}
+            aria-label={t('vault.goToPage', { page })}
             aria-current={page === safeCurrentPage ? 'page' : undefined}
             className={`min-w-9 px-2.5 py-2 rounded-full text-sm font-medium transition-all border ${
               page === safeCurrentPage
@@ -124,10 +126,10 @@ export function VaultGrid({
         type="button"
         onClick={() => goToPage((prev) => Math.min(totalPages, prev + 1))}
         disabled={safeCurrentPage === totalPages}
-        aria-label="Go to next page"
+        aria-label={t('vault.nextPage')}
         className="inline-flex items-center gap-1 px-3 py-2 bg-surface border border-border rounded-full hover:border-accent/40 hover:bg-accent-soft hover:text-accent transition-all text-sm font-medium text-fg-muted disabled:opacity-40 disabled:hover:border-border disabled:hover:bg-surface disabled:hover:text-fg-muted"
       >
-        <span className="hidden sm:inline">Next</span>
+        <span className="hidden sm:inline">{t('common.next')}</span>
         <ChevronRight className="w-4 h-4" />
       </button>
     </nav>
@@ -157,13 +159,13 @@ export function VaultGrid({
 
       {totalPages <= 1 ? (
         <p className="pt-8 pb-20 text-center text-sm text-fg-muted">
-          Showing {totalCount} {totalCount === 1 ? 'character' : 'characters'}
+          {t('vault.showing', { count: totalCount })}
         </p>
       ) : (
         <div className="flex flex-col items-center gap-3 pt-8 pb-20">
           <p className="text-sm text-fg-muted" aria-live="polite">
-            Showing {rangeStart}–{rangeEnd} of {totalCount} characters
-            <span className="text-fg-subtle"> · Page {safeCurrentPage} of {totalPages}</span>
+            {t('vault.showingRange', { start: rangeStart, end: rangeEnd, total: totalCount })}
+            <span className="text-fg-subtle"> · {t('vault.pageOf', { page: safeCurrentPage, total: totalPages })}</span>
           </p>
           {pagination('Library pages')}
         </div>

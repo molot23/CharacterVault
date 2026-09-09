@@ -23,6 +23,7 @@ import {
   ExternalLink,
   Library,
 } from 'lucide-react';
+import { useI18n } from '../i18n';
 
 // --- Utility Components ---
 
@@ -77,6 +78,7 @@ const CharacterPreviewCard: React.FC<CharacterPreviewCardProps> = ({
   data,
   avatarData,
 }) => {
+  const { t } = useI18n();
   const imageSrc = avatarData || data.avatar || null;
   const lorebookCount = data.character_book?.entries?.length || 0;
   const greetingCount = (data.alternate_greetings?.length || 0) + 1; // +1 for first_mes
@@ -86,7 +88,7 @@ const CharacterPreviewCard: React.FC<CharacterPreviewCardProps> = ({
   const previewDescription =
     data.description?.length > 200
       ? data.description.slice(0, 200) + '...'
-      : data.description || 'No description';
+      : data.description || t('importPage.noDescription');
 
   return (
     <div className="bg-surface rounded-2xl border border-border shadow-lg overflow-hidden">
@@ -102,7 +104,7 @@ const CharacterPreviewCard: React.FC<CharacterPreviewCardProps> = ({
           ) : (
             <div className="flex flex-col items-center justify-center text-fg-subtle">
               <User className="w-16 h-16 mb-2" />
-              <span className="text-sm">No avatar</span>
+              <span className="text-sm">{t('importPage.noAvatar')}</span>
             </div>
           )}
         </div>
@@ -111,10 +113,10 @@ const CharacterPreviewCard: React.FC<CharacterPreviewCardProps> = ({
         {/* Name overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-6">
           <h2 className="text-2xl font-bold text-white drop-shadow-md">
-            {data.name || 'Unnamed Character'}
+            {data.name || t('importPage.unnamed')}
           </h2>
           {data.creator && (
-            <p className="text-white/80 text-sm mt-1">by {data.creator}</p>
+            <p className="text-white/80 text-sm mt-1">{t('importPage.by', { creator: data.creator })}</p>
           )}
         </div>
       </div>
@@ -126,17 +128,17 @@ const CharacterPreviewCard: React.FC<CharacterPreviewCardProps> = ({
           {lorebookCount > 0 && (
             <div className="flex items-center gap-1.5">
               <BookOpen className="w-4 h-4" />
-              <span>{lorebookCount} lorebook entries</span>
+              <span>{t('importPage.lorebookEntries', { count: lorebookCount })}</span>
             </div>
           )}
           <div className="flex items-center gap-1.5">
             <MessageSquare className="w-4 h-4" />
-            <span>{greetingCount} greeting(s)</span>
+            <span>{t('importPage.greetings', { count: greetingCount })}</span>
           </div>
           {tagCount > 0 && (
             <div className="flex items-center gap-1.5">
               <Tags className="w-4 h-4" />
-              <span>{tagCount} tags</span>
+              <span>{t('importPage.tags', { count: tagCount })}</span>
             </div>
           )}
         </div>
@@ -144,7 +146,7 @@ const CharacterPreviewCard: React.FC<CharacterPreviewCardProps> = ({
         {/* Description */}
         <div className="border-t border-border pt-4">
           <h3 className="text-sm font-semibold text-fg mb-2">
-            Description
+            {t('importPage.description')}
           </h3>
           <p className="text-sm text-fg-muted whitespace-pre-wrap line-clamp-6">
             {previewDescription}
@@ -157,7 +159,7 @@ const CharacterPreviewCard: React.FC<CharacterPreviewCardProps> = ({
             {data.personality && (
               <div>
                 <h3 className="text-sm font-semibold text-fg mb-1">
-                  Personality
+                  {t('importPage.personality')}
                 </h3>
                 <p className="text-sm text-fg-muted line-clamp-3">
                   {data.personality}
@@ -167,7 +169,7 @@ const CharacterPreviewCard: React.FC<CharacterPreviewCardProps> = ({
             {data.scenario && (
               <div>
                 <h3 className="text-sm font-semibold text-fg mb-1">
-                  Scenario
+                  {t('importPage.scenario')}
                 </h3>
                 <p className="text-sm text-fg-muted line-clamp-3">
                   {data.scenario}
@@ -181,7 +183,7 @@ const CharacterPreviewCard: React.FC<CharacterPreviewCardProps> = ({
         {data.character_version && (
           <div className="border-t border-border pt-4">
             <span className="text-xs text-fg-muted">
-              Version: {data.character_version}
+              {t('importPage.version', { version: data.character_version })}
             </span>
           </div>
         )}
@@ -201,6 +203,7 @@ const ManualPasteSection: React.FC<ManualPasteSectionProps> = ({
   onPaste,
   errorMessage,
 }) => {
+  const { t } = useI18n();
   const [text, setText] = useState('');
 
   const handleSubmit = useCallback(
@@ -219,7 +222,7 @@ const ManualPasteSection: React.FC<ManualPasteSectionProps> = ({
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Paste character JSON here..."
+          placeholder={t('importPage.pastePlaceholder')}
           className="w-full h-48 p-4 bg-surface border border-border rounded-xl text-sm font-mono resize-none focus:outline-hidden focus:ring-2 focus:ring-accent"
           spellCheck={false}
         />
@@ -246,7 +249,7 @@ const ManualPasteSection: React.FC<ManualPasteSectionProps> = ({
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-fg-muted hover:bg-accent-soft hover:text-accent rounded-lg transition-colors"
           >
             <ClipboardPaste className="w-4 h-4" />
-            Paste from Clipboard
+            {t('importPage.pasteClipboard')}
           </button>
           <button
             type="submit"
@@ -254,7 +257,7 @@ const ManualPasteSection: React.FC<ManualPasteSectionProps> = ({
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-accent text-accent-fg rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             <Upload className="w-4 h-4" />
-            Load Preview
+            {t('importPage.loadPreview')}
           </button>
         </div>
       </form>
@@ -265,6 +268,7 @@ const ManualPasteSection: React.FC<ManualPasteSectionProps> = ({
 // --- Main Import Page Component ---
 
 export const ImportPage: React.FC = () => {
+  const { t } = useI18n();
   const [searchParams] = useSearchParams();
   const source = searchParams.get('source');
   const { closeCharacter } = useCharacterContext();
@@ -295,8 +299,8 @@ export const ImportPage: React.FC = () => {
       <header className="shrink-0 w-full backdrop-blur-xl bg-surface/80 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <IconButton icon={ArrowLeft} onClick={goToLibrary} title="Back to Library" />
-            <h1 className="text-lg font-semibold">Import Character</h1>
+            <IconButton icon={ArrowLeft} onClick={goToLibrary} title={t('importPage.backToLibrary')} />
+            <h1 className="text-lg font-semibold">{t('importPage.title')}</h1>
             {isSillyTavernSource && (
               <span className="px-2 py-0.5 text-xs bg-info-soft text-info-soft-fg rounded-full">
                 SillyTavern
@@ -315,9 +319,9 @@ export const ImportPage: React.FC = () => {
             <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-6">
               <Loader2 className="w-8 h-8 text-fg-muted animate-spin" />
             </div>
-            <h2 className="text-xl font-semibold mb-2">Reading clipboard...</h2>
+            <h2 className="text-xl font-semibold mb-2">{t('importPage.reading')}</h2>
             <p className="text-fg-muted max-w-sm">
-              Attempting to read character data from your clipboard automatically.
+              {t('importPage.readingHint')}
             </p>
           </div>
         )}
@@ -329,10 +333,10 @@ export const ImportPage: React.FC = () => {
               <AlertCircle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
               <div>
                 <h3 className="font-medium text-warning-soft-fg">
-                  Could not read clipboard automatically
+                  {t('importPage.clipboardFailed')}
                 </h3>
                 <p className="text-sm text-warning-soft-fg mt-1 whitespace-pre-line">
-                  {errorMessage || 'Please paste the character data manually below.'}
+                  {errorMessage || t('importPage.pasteManually')}
                 </p>
               </div>
             </div>
@@ -344,13 +348,13 @@ export const ImportPage: React.FC = () => {
         {importState === 'preview' && previewData && (
           <div className="space-y-6 animate-fade-in">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Character Preview</h2>
+              <h2 className="text-xl font-semibold">{t('importPage.preview')}</h2>
               <button
                 onClick={goToLibrary}
                 className="flex items-center gap-1.5 text-sm text-fg-muted hover:text-fg"
               >
                 <X className="w-4 h-4" />
-                Cancel
+                {t('common.cancel')}
               </button>
             </div>
 
@@ -362,13 +366,13 @@ export const ImportPage: React.FC = () => {
                 className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-accent text-accent-fg font-medium rounded-xl hover:opacity-90 transition-opacity"
               >
                 <Upload className="w-4 h-4" />
-                Import Character
+                {t('importPage.importCharacter')}
               </button>
               <button
                 onClick={goToLibrary}
                 className="flex items-center gap-2 px-6 py-3 border border-border-strong text-fg-muted font-medium rounded-xl hover:bg-hover transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
             </div>
           </div>
@@ -380,9 +384,9 @@ export const ImportPage: React.FC = () => {
             <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-6">
               <Loader2 className="w-8 h-8 text-fg-muted animate-spin" />
             </div>
-            <h2 className="text-xl font-semibold mb-2">Importing character...</h2>
+            <h2 className="text-xl font-semibold mb-2">{t('importPage.importing')}</h2>
             <p className="text-fg-muted">
-              Saving to your CharacterVault library.
+              {t('importPage.saving')}
             </p>
           </div>
         )}
@@ -393,12 +397,9 @@ export const ImportPage: React.FC = () => {
             <div className="w-20 h-20 bg-success-soft rounded-full flex items-center justify-center mb-6">
               <CheckCircle className="w-10 h-10 text-success" />
             </div>
-            <h2 className="text-2xl font-bold mb-2">Character Imported!</h2>
+            <h2 className="text-2xl font-bold mb-2">{t('importPage.success')}</h2>
             <p className="text-fg-muted mb-8 max-w-sm">
-              <span className="font-medium text-fg">
-                {importedCharacter.name}
-              </span>{' '}
-              has been added to your library.
+              {t('importPage.added', { name: importedCharacter.name })}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
               <button
@@ -406,14 +407,14 @@ export const ImportPage: React.FC = () => {
                 className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-accent text-accent-fg font-medium rounded-xl hover:opacity-90 transition-opacity"
               >
                 <ExternalLink className="w-4 h-4" />
-                Open Character
+                {t('importPage.open')}
               </button>
               <button
                 onClick={goToLibrary}
                 className="flex items-center justify-center gap-2 px-6 py-3 border border-border-strong text-fg-muted font-medium rounded-xl hover:bg-hover transition-colors"
               >
                 <Library className="w-4 h-4" />
-                Back to Library
+                {t('importPage.backToLibrary')}
               </button>
             </div>
           </div>
@@ -426,9 +427,9 @@ export const ImportPage: React.FC = () => {
               <div className="w-20 h-20 bg-danger-soft rounded-full flex items-center justify-center mb-6">
                 <AlertCircle className="w-10 h-10 text-danger" />
               </div>
-              <h2 className="text-2xl font-bold mb-2">Import Failed</h2>
+              <h2 className="text-2xl font-bold mb-2">{t('importPage.failed')}</h2>
               <p className="text-fg-muted mb-8 max-w-sm">
-                {errorMessage || 'Something went wrong while importing the character.'}
+                {errorMessage || t('importPage.failedHint')}
               </p>
             </div>
             <ManualPasteSection onPaste={parseManualInput} errorMessage={null} />
@@ -438,7 +439,7 @@ export const ImportPage: React.FC = () => {
                 className="flex items-center gap-2 px-6 py-3 text-fg-muted hover:text-fg transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back to Library
+                {t('importPage.backToLibrary')}
               </button>
             </div>
           </div>

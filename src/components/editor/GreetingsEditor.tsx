@@ -15,6 +15,7 @@ import type {
 import type { CharacterSection } from '../../db/characterTypes';
 import { useAIEditor } from '../../hooks';
 import { estimateTokens } from '../../services/AIService';
+import { useI18n } from '../../i18n';
 
 interface GreetingsEditorProps {
   greetings: string[];
@@ -70,6 +71,7 @@ function GreetingListItem({
   onSelect,
   onDelete,
 }: GreetingListItemProps): React.ReactElement {
+  const { t } = useI18n();
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     onDelete();
@@ -92,19 +94,19 @@ function GreetingListItem({
       <div className="flex items-start gap-2.5">
         <div className="mt-1.5 shrink-0">
           {hasContent ? (
-            <div className="h-2 w-2 rounded-full bg-success" title="Has content" />
+            <div className="h-2 w-2 rounded-full bg-success" title={t('editor.hasContent')} />
           ) : (
-            <div className="h-2 w-2 rounded-full bg-fg-subtle" title="Empty" />
+            <div className="h-2 w-2 rounded-full bg-fg-subtle" title={t('editor.empty')} />
           )}
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="text-sm font-medium text-fg">
-            Greeting {index + 1}
+            {t('editor.greeting', { number: index + 1 })}
           </div>
           <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-fg-muted">
-            {tokenCount !== null ? <span>{tokenCount.toLocaleString()} tokens</span> : null}
-            {!hasContent ? <span>Empty</span> : null}
+            {tokenCount !== null ? <span>{t('editor.tokens', { count: tokenCount.toLocaleString() })}</span> : null}
+            {!hasContent ? <span>{t('editor.empty')}</span> : null}
           </div>
           {hasContent && (
             <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-fg-subtle">
@@ -117,8 +119,8 @@ function GreetingListItem({
           type="button"
           onClick={handleDelete}
           className="shrink-0 rounded-lg p-2 text-fg-muted transition-colors hover:bg-danger-soft hover:text-danger touch-manipulation"
-          title="Delete greeting"
-          aria-label={`Delete greeting ${index + 1}`}
+          title={t('editor.deleteGreeting')}
+          aria-label={t('editor.deleteGreetingConfirm', { number: index + 1 })}
         >
           <Trash2 className="h-4 w-4" />
         </button>
@@ -204,6 +206,7 @@ export function GreetingsEditor({
   spellcheck,
   markdownImageOpenLinks,
 }: GreetingsEditorProps): React.ReactElement {
+  const { t } = useI18n();
   const [greetingsList, setGreetingsList] = useState<string[]>(greetings);
   const [selectedGreetingIndex, setSelectedGreetingIndex] = useState<number>(0);
   const [isMobileViewOpen, setIsMobileViewOpen] = useState(false);
@@ -240,7 +243,7 @@ export function GreetingsEditor({
 
   // Handle delete greeting
   const handleDeleteGreeting = useCallback((index: number) => {
-    const shouldDelete = window.confirm(`Delete greeting ${index + 1}?`);
+    const shouldDelete = window.confirm(t('editor.deleteGreetingConfirm', { number: index + 1 }));
     if (!shouldDelete) return;
 
     const newList = greetingsList.filter((_, i) => i !== index);
@@ -253,7 +256,7 @@ export function GreetingsEditor({
     } else if (selectedGreetingIndex > index) {
       setSelectedGreetingIndex(selectedGreetingIndex - 1);
     }
-  }, [greetingsList, selectedGreetingIndex, onChange]);
+  }, [greetingsList, selectedGreetingIndex, onChange, t]);
 
   // Handle select greeting with mobile view
   const handleSelectGreeting = useCallback((index: number) => {
@@ -290,9 +293,9 @@ export function GreetingsEditor({
               <MessageSquare className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-fg">Greetings</p>
+              <p className="text-sm font-semibold text-fg">{t('editor.greetings')}</p>
               <p className="text-xs text-fg-muted">
-                {greetingsList.length} greeting{greetingsList.length !== 1 ? 's' : ''}
+                {t('editor.greetingCount', { count: greetingsList.length })}
               </p>
             </div>
           </div>
@@ -302,8 +305,8 @@ export function GreetingsEditor({
           {greetingsList.length === 0 ? (
             <div className="flex h-full min-h-40 flex-col items-center justify-center px-4 py-10 text-center text-fg-subtle">
               <MessageSquare className="mb-3 h-10 w-10 opacity-40" />
-              <p className="text-sm font-medium text-fg-muted">No greetings yet</p>
-              <p className="mt-1 text-xs">Add one to give your character alternate first messages.</p>
+              <p className="text-sm font-medium text-fg-muted">{t('editor.noGreetings')}</p>
+              <p className="mt-1 text-xs">{t('editor.noGreetingsHint')}</p>
             </div>
           ) : (
             greetingsList.map((greeting, index) => (
@@ -327,7 +330,7 @@ export function GreetingsEditor({
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border-strong bg-surface px-3 py-2.5 text-sm font-medium text-fg-muted transition-colors hover:border-accent/50 hover:bg-accent-soft hover:text-accent touch-manipulation"
           >
             <Plus className="h-4 w-4" />
-            New Greeting
+            {t('editor.newGreeting')}
           </button>
         </div>
       </div>
@@ -348,13 +351,13 @@ export function GreetingsEditor({
                 className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-fg-muted transition-colors hover:bg-hover hover:text-fg md:hidden touch-manipulation"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Back
+                {t('common.back')}
               </button>
               <div className="hidden min-w-0 md:block">
-                <p className="text-sm font-semibold text-fg">Greeting {safeSelectedIndex + 1}</p>
+                <p className="text-sm font-semibold text-fg">{t('editor.greeting', { number: safeSelectedIndex + 1 })}</p>
                 {selectedGreetingTokenCount !== null && (
                   <p className="text-xs text-fg-muted">
-                    {selectedGreetingTokenCount.toLocaleString()} tokens
+                    {t('editor.tokens', { count: selectedGreetingTokenCount.toLocaleString() })}
                   </p>
                 )}
               </div>
@@ -362,10 +365,10 @@ export function GreetingsEditor({
                 type="button"
                 onClick={() => handleDeleteGreeting(safeSelectedIndex)}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium text-fg-muted transition-colors hover:border-danger/40 hover:bg-danger-soft hover:text-danger touch-manipulation"
-                title="Delete greeting"
+                title={t('editor.deleteGreeting')}
               >
                 <Trash2 className="h-3.5 w-3.5" />
-                <span className="sm:inline">Delete</span>
+                <span className="sm:inline">{t('common.delete')}</span>
               </button>
             </div>
             <GreetingDetail
@@ -388,8 +391,8 @@ export function GreetingsEditor({
           <div className="flex h-full items-center justify-center text-fg-subtle">
             <div className="px-6 text-center">
               <MessageSquare className="mx-auto mb-3 h-12 w-12 opacity-40" />
-              <p className="text-sm font-medium text-fg-muted">Select a greeting to edit</p>
-              <p className="mt-1 text-xs">Or create a new one to get started</p>
+              <p className="text-sm font-medium text-fg-muted">{t('editor.selectGreeting')}</p>
+              <p className="mt-1 text-xs">{t('editor.selectGreetingHint')}</p>
             </div>
           </div>
         )}
