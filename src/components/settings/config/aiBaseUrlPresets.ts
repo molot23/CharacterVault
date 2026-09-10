@@ -51,6 +51,13 @@ export const AI_BASE_URL_PRESETS: AIBaseUrlPreset[] = [
     keyUrl: 'https://platform.minimax.io/console/plan',
   },
   {
+    id: 'kkai-proxy',
+    label: 'KKAI 代理 (GitHub Pages)',
+    baseUrl: 'https://charactervault-kkai-proxy.caramel-salary.workers.dev/v1',
+    helper:
+      'CORS proxy in front of api.kkaiapi.com for CharacterVault on GitHub Pages. Use your original KKAI token.',
+  },
+  {
     id: 'lmstudio',
     label: 'LM Studio / localhost',
     baseUrl: 'http://127.0.0.1:1234/v1',

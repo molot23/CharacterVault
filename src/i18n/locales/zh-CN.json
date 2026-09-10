@@ -499,7 +499,8 @@
         "synthetic": "OpenAI 兼容端点。建议使用 syn: 别名以始终获取最新推荐模型。",
         "openrouter": "OpenAI 兼容网关。使用 org/model 形式的模型标识，例如 openai/gpt-4o。",
         "minimax": "OpenAI 兼容端点。API 密钥以 sk-cp 开头。",
-        "lmstudio": "LM Studio 的默认本地端点。"
+        "lmstudio": "LM Studio 的默认本地端点。",
+        "kkai-proxy": "经 Cloudflare 代理访问 api.kkaiapi.com，解决 GitHub Pages 跨域。密钥仍用你的中转站令牌。"
       },
       "fetchedModels": "已获取 {{count}} 个模型",
       "fetchModelsFailed": "获取模型失败",

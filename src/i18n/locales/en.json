@@ -499,7 +499,8 @@
         "synthetic": "OpenAI-compatible endpoint. Prefer syn: aliases so you always get the latest recommended model.",
         "openrouter": "OpenAI-compatible gateway. Use org/model slugs such as openai/gpt-4o.",
         "minimax": "OpenAI-compatible endpoint. API keys start with sk-cp.",
-        "lmstudio": "Default local endpoint for LM Studio."
+        "lmstudio": "Default local endpoint for LM Studio.",
+        "kkai-proxy": "Cloudflare CORS proxy in front of api.kkaiapi.com for GitHub Pages. Use your original relay token."
       },
       "fetchedModels": "Fetched {{count}} models",
       "fetchModelsFailed": "Failed to fetch models",

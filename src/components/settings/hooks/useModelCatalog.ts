@@ -259,7 +259,13 @@ export function useModelCatalog({
         if (err instanceof AIError) {
           addToast('error', err.message);
         } else {
-          addToast('error', t('settings.ai.fetchModelsFailed'));
+          const detail = err instanceof Error && err.message ? err.message : '';
+          addToast(
+            'error',
+            detail
+              ? `${t('settings.ai.fetchModelsFailed')}: ${detail}`
+              : t('settings.ai.fetchModelsFailed')
+          );
         }
       } finally {
         if (mountedRef.current && isOpenRef.current) setIsFetchingModels(false);
@@ -383,24 +389,34 @@ export function useModelCatalog({
       const cachedModels =
         !cached || isCacheStale(normalizedUrl, subscriptionOnly) ? [] : cached.models;
 
-      setDraft((prev) => ({
-        ...prev,
-        ai: {
-          ...prev.ai,
-          baseUrl,
-          lastCustomBaseUrl: normalizedUrl,
-          modelId: normalizedUrl
-            ? getStoredModelId(prev.ai.modelIdsByBaseUrl, normalizedUrl)
-            : prev.ai.modelId,
-          apiKey: normalizedUrl
-            ? getStoredApiKey(prev.ai.apiKeysByBaseUrl, normalizedUrl)
-            : prev.ai.apiKey,
-          availableModels: cachedModels,
-        },
-      }));
+      setDraft((prev) => {
+        const storedKey = normalizedUrl
+          ? getStoredApiKey(prev.ai.apiKeysByBaseUrl, normalizedUrl)
+          : '';
+        // Keep the key currently in the form when switching to a new custom URL
+        // that has no stored profile yet (e.g. moving to a CORS proxy).
+        const nextKey = storedKey || prev.ai.apiKey;
+        return {
+          ...prev,
+          ai: {
+            ...prev.ai,
+            baseUrl,
+            lastCustomBaseUrl: normalizedUrl,
+            modelId: normalizedUrl
+              ? getStoredModelId(prev.ai.modelIdsByBaseUrl, normalizedUrl) || prev.ai.modelId
+              : prev.ai.modelId,
+            apiKey: nextKey,
+            availableModels: cachedModels,
+            apiKeysByBaseUrl: normalizedUrl && nextKey
+              ? { ...prev.ai.apiKeysByBaseUrl, [normalizedUrl]: nextKey }
+              : prev.ai.apiKeysByBaseUrl,
+          },
+        };
+      });
 
       if (cachedModels.length === 0 && normalizedUrl) {
-        const apiKey = draftRef.current.ai.apiKeysByBaseUrl?.[normalizedUrl];
+        const apiKey =
+          draftRef.current.ai.apiKeysByBaseUrl?.[normalizedUrl] || draftRef.current.ai.apiKey;
         if (apiKey) {
           void fetchModelsForUrl(baseUrl, apiKey, { subscriptionOnly }).then((models) => {
             if (!mountedRef.current || !isOpenRef.current) return;
