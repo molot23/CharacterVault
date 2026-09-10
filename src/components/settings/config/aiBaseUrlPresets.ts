@@ -52,8 +52,8 @@ export const AI_BASE_URL_PRESETS: AIBaseUrlPreset[] = [
   },
   {
     id: 'kkai-proxy',
-    label: 'KKAI 代理 (GitHub Pages)',
-    baseUrl: 'https://charactervault-kkai-proxy.caramel-salary.workers.dev/v1',
+    label: 'KKAI 同源代理',
+    baseUrl: 'https://charactervault-zh.caramel-salary.workers.dev/v1',
     helper:
       'CORS proxy in front of api.kkaiapi.com for CharacterVault on GitHub Pages. Use your original KKAI token.',
   },
