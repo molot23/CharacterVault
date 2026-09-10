@@ -160,7 +160,15 @@ export const ConceptInput: React.FC<ConceptInputProps> = ({
 }) => {
   const { t } = useI18n();
   const trimmed = concept.trim();
-  const wordCount = trimmed ? trimmed.split(/\s+/).length : 0;
+  // English: whitespace-separated words. Chinese/CJK: each ideograph counts as one
+  // unit so phrases without spaces (e.g. 「一个萝莉妈妈」) are not stuck at 1.
+  const wordCount = (() => {
+    if (!trimmed) return 0;
+    const cjkChars = trimmed.match(/[\u3400-\u9FFF\uF900-\uFAFF]/g) ?? [];
+    const withoutCjk = trimmed.replace(/[\u3400-\u9FFF\uF900-\uFAFF]+/g, ' ').trim();
+    const latinWords = withoutCjk ? withoutCjk.split(/\s+/).filter(Boolean) : [];
+    return cjkChars.length + latinWords.length;
+  })();
   const hasMinimumWords = wordCount >= WORD_COUNT_MIN;
   const hasGenerationTags = hasRequiredGenerationTags(tagSelections);
   const canGenerate = isConfigured && hasMinimumWords && hasGenerationTags && !isGenerating;
