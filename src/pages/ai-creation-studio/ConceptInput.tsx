@@ -13,11 +13,12 @@ import {
   PenLine,
   Tag,
 } from 'lucide-react';
+import { useI18n } from '../../i18n';
 import { TagSelector } from './TagSelector';
 import type { InputMode } from './types';
 import type { TagCategory, TaggedRef } from './tags/tagData';
 import {
-  formatTag,
+  getLocalizedTagLabel,
   getGenerationTags,
   hasRequiredGenerationTags,
   PERSPECTIVE_TAGS,
@@ -48,7 +49,7 @@ interface ConceptInputProps {
   favorites: TaggedRef[];
   recent: TaggedRef[];
   onToggleFavorite: (category: string, tag: string) => void;
-  onAddCustomTag: (categoryKey: string, raw: string) => Promise<{ ok: boolean; slug?: string; error?: string }>;
+  onAddCustomTag: (categoryKey: string, raw: string) => Promise<{ ok: boolean; slug?: string; error?: string; categoryKey?: string }>;
   onRemoveCustomTag: (categoryKey: string, tag: string) => void;
 }
 
@@ -65,6 +66,7 @@ const GenerationStyleSelector: React.FC<GenerationStyleSelectorProps> = ({
   onSelectionsChange,
   isGenerating,
 }) => {
+  const { t } = useI18n();
   const generationSelections = selections.generation ?? [];
   const generationTags = getGenerationTags(selections);
 
@@ -89,7 +91,7 @@ const GenerationStyleSelector: React.FC<GenerationStyleSelectorProps> = ({
             : 'border-border text-fg-muted hover:border-accent/40 hover:bg-accent-soft hover:text-accent'
         }`}
       >
-        {formatTag(tag)}
+        {getLocalizedTagLabel(tag, t)}
       </button>
     );
   };
@@ -98,17 +100,17 @@ const GenerationStyleSelector: React.FC<GenerationStyleSelectorProps> = ({
     <div className="space-y-3 p-4 bg-bg/50 border border-border rounded-xl">
       <div className="flex items-center justify-between gap-3">
         <span className="text-xs font-semibold text-fg-muted uppercase tracking-wider">
-          Generation Style
+          {t('studio.generationStyle')}
         </span>
         <span className="font-bold px-1.5 py-0.5 rounded-full bg-warning-soft text-warning-soft-fg">
-          Required
+          {t('studio.required')}
         </span>
       </div>
 
       <div className="space-y-2">
         <div>
           <p className="font-medium text-fg-muted mb-1.5">
-            Perspective
+            {t('studio.perspective')}
           </p>
           <div className="flex flex-wrap gap-1.5">
             {PERSPECTIVE_TAGS.map(renderTagButton)}
@@ -116,7 +118,7 @@ const GenerationStyleSelector: React.FC<GenerationStyleSelectorProps> = ({
         </div>
         <div>
           <p className="font-medium text-fg-muted mb-1.5">
-            Tense
+            {t('studio.tense')}
           </p>
           <div className="flex flex-wrap gap-1.5">
             {TENSE_TAGS.map(renderTagButton)}
@@ -126,7 +128,7 @@ const GenerationStyleSelector: React.FC<GenerationStyleSelectorProps> = ({
 
       {(!generationTags.perspective || !generationTags.tense) && (
         <p className="text-xs text-warning">
-          Choose one perspective and one tense before generating.
+          {t('studio.chooseStyleHint')}
         </p>
       )}
     </div>
@@ -156,6 +158,7 @@ export const ConceptInput: React.FC<ConceptInputProps> = ({
   onAddCustomTag,
   onRemoveCustomTag,
 }) => {
+  const { t } = useI18n();
   const trimmed = concept.trim();
   const wordCount = trimmed ? trimmed.split(/\s+/).length : 0;
   const hasMinimumWords = wordCount >= WORD_COUNT_MIN;
@@ -175,7 +178,7 @@ export const ConceptInput: React.FC<ConceptInputProps> = ({
           }`}
         >
           <PenLine className="w-4 h-4" />
-          Write
+          {t('studio.write')}
         </button>
         <button
           onClick={() => onInputModeChange('tags')}
@@ -186,7 +189,7 @@ export const ConceptInput: React.FC<ConceptInputProps> = ({
           }`}
         >
           <Tag className="w-4 h-4" />
-          Tags
+          {t('studio.tags')}
         </button>
       </div>
 
@@ -201,10 +204,10 @@ export const ConceptInput: React.FC<ConceptInputProps> = ({
           {/* Header */}
           <div className="text-center sm:text-left">
             <h2 className="text-lg font-bold text-fg">
-              What character do you want to create?
+              {t('studio.whatCharacter')}
             </h2>
             <p className="text-sm text-fg-muted mt-1">
-              Describe your idea and the AI will generate a complete character card.
+              {t('studio.describeIdea')}
             </p>
           </div>
 
@@ -213,7 +216,7 @@ export const ConceptInput: React.FC<ConceptInputProps> = ({
             <textarea
               value={concept}
               onChange={(e) => onConceptChange(e.target.value)}
-              placeholder="A cynical dwarven blacksmith with a secret past, living in a mountain fortress who speaks in riddles..."
+              placeholder={t('studio.conceptPlaceholder')}
               disabled={isGenerating}
               className="w-full h-36 p-4 bg-bg/50 border border-border rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-surface disabled:opacity-50 disabled:cursor-not-allowed transition-all placeholder:text-fg-subtle"
             />
@@ -226,7 +229,7 @@ export const ConceptInput: React.FC<ConceptInputProps> = ({
                       : 'text-warning'
                   }`}
                 >
-                  {wordCount} {wordCount === 1 ? 'word' : 'words'}
+                  {wordCount} {wordCount === 1 ? t('studio.word') : t('studio.words')}
                 </span>
               )}
             </div>
@@ -240,10 +243,10 @@ export const ConceptInput: React.FC<ConceptInputProps> = ({
               </div>
               <div>
                 <p className="text-sm font-medium text-warning-soft-fg">
-                  AI Provider Not Configured
+                  {t('studio.providerNotConfigured')}
                 </p>
                 <p className="text-xs text-warning-soft-fg mt-0.5">
-                  Configure your AI provider and choose a model to start generating characters.
+                  {t('studio.providerNotConfiguredHelp')}
                 </p>
               </div>
               <button
@@ -251,14 +254,14 @@ export const ConceptInput: React.FC<ConceptInputProps> = ({
                 className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-warning-soft-fg bg-warning-soft hover:opacity-90 rounded-lg transition-colors"
               >
                 <Settings2 className="w-4 h-4" />
-                Configure AI
+                {t('studio.configureAI')}
               </button>
             </div>
           )}
 
           {/* API call cost notice */}
           <p className="text-xs text-fg-subtle text-center">
-            Generation uses a minimum of {minApiCalls} API call{minApiCalls === 1 ? '' : 's'}. At least one per field.
+            {t(minApiCalls === 1 ? 'studio.apiCallsNotice' : 'studio.apiCallsNotice_plural', { count: minApiCalls })}
           </p>
 
           {/* Action Bar */}
@@ -273,7 +276,7 @@ export const ConceptInput: React.FC<ConceptInputProps> = ({
               ) : (
                 <Sparkles className="w-4 h-4" />
               )}
-              {isGenerating ? 'Generating Character...' : 'Generate Character'}
+              {isGenerating ? t('studio.generatingCharacter') : t('studio.generateCharacter')}
             </button>
             {isGenerating && (
               <button
@@ -281,7 +284,7 @@ export const ConceptInput: React.FC<ConceptInputProps> = ({
                 className="flex items-center gap-2 px-4 py-2.5 border border-border-strong text-fg-muted font-medium rounded-xl hover:bg-hover active:scale-[0.98] transition-all"
               >
                 <X className="w-4 h-4" />
-                Stop
+                {t('studio.stop')}
               </button>
             )}
           </div>
@@ -289,13 +292,13 @@ export const ConceptInput: React.FC<ConceptInputProps> = ({
           {/* Subtle hint when configured but too short */}
           {isConfigured && !isGenerating && trimmed && !hasMinimumWords && (
             <p className="text-xs text-warning text-center">
-              Add a few more words to help the AI understand your concept.
+              {t('studio.addMoreWords')}
             </p>
           )}
 
           {isConfigured && !isGenerating && hasMinimumWords && !hasGenerationTags && (
             <p className="text-xs text-warning text-center">
-              Choose a generation style before creating the character.
+              {t('studio.chooseStyleBeforeCreate')}
             </p>
           )}
         </>

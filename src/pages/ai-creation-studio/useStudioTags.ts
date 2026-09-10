@@ -27,7 +27,7 @@ export interface UseStudioTagsResult {
   hiddenCategories: string[];
   favorites: TaggedRef[];
   recent: TaggedRef[];
-  addCustomTag: (categoryKey: string, raw: string) => Promise<{ ok: boolean; slug?: string; error?: string }>;
+  addCustomTag: (categoryKey: string, raw: string) => Promise<{ ok: boolean; slug?: string; error?: string; categoryKey?: string }>;
   removeCustomTag: (categoryKey: string, tag: string) => Promise<void>;
   toggleFavorite: (category: string, tag: string) => void;
   trackUsed: (selections: Record<string, string[]>) => void;

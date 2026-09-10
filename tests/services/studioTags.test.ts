@@ -55,7 +55,8 @@ describe('resolveNewCustomTag', () => {
     const result = resolveNewCustomTag('personality', 'Elf');
     expect(result).toEqual({
       ok: false,
-      error: 'This tag already exists in Identity category.',
+      error: 'studio.errors.tagAlreadyExists',
+      categoryKey: 'identity',
     });
   });
 
@@ -65,7 +66,8 @@ describe('resolveNewCustomTag', () => {
     });
     expect(result).toEqual({
       ok: false,
-      error: 'This tag already exists in Identity category.',
+      error: 'studio.errors.tagAlreadyExists',
+      categoryKey: 'identity',
     });
   });
 
@@ -73,7 +75,8 @@ describe('resolveNewCustomTag', () => {
     const result = resolveNewCustomTag('identity', 'elf');
     expect(result).toEqual({
       ok: false,
-      error: 'This tag already exists in Identity category.',
+      error: 'studio.errors.tagAlreadyExists',
+      categoryKey: 'identity',
     });
   });
 

@@ -4,6 +4,7 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { useI18n } from '../../i18n';
 import { AIService, AIError } from '../../services/AIService';
 import { characterSettingsService } from '../../services/CharacterSettingsService';
 import type { AIConfig, SamplerSettings, StudioPrompts, StudioSettings } from '../../db/characterTypes';
@@ -60,6 +61,7 @@ export interface UseAIGenerationResult {
 }
 
 export function useAIGeneration(): UseAIGenerationResult {
+  const { t } = useI18n();
   const [state, setState] = useState<GenerationState>(INITIAL_STATE);
   const [isConfigured, setIsConfigured] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -217,7 +219,7 @@ export function useAIGeneration(): UseAIGenerationResult {
       currentData: Partial<CharacterSpec>
     ): Promise<string> => {
       const service = aiServiceRef.current;
-      if (!service) throw new Error('AI service not initialized');
+      if (!service) throw new Error(t('studio.errors.notInitialized'));
 
       const messages = buildMessages(field, concept, currentData);
 
@@ -252,13 +254,13 @@ export function useAIGeneration(): UseAIGenerationResult {
         );
 
         if (!isEnabledField(enabledFieldsRef.current, field)) {
-          throw new AIError('Request was cancelled', 'unknown');
+          throw new AIError(t('studio.errors.cancelled'), 'unknown');
         }
 
         const content = response.content || '';
         if (!content.trim()) {
           throw new AIError(
-            `Generation returned empty content for "${field}". The model may have errored during generation.`,
+            t('studio.errors.emptyContent', { field }),
             'unknown'
           );
         }
@@ -284,7 +286,7 @@ export function useAIGeneration(): UseAIGenerationResult {
         }
       }
     },
-    [buildMessages]
+    [buildMessages, t]
   );
 
   const discardFieldOutput = useCallback((
@@ -314,7 +316,7 @@ export function useAIGeneration(): UseAIGenerationResult {
     ) => {
       for (const field of fields) {
         if (isAbortedRef.current) {
-          throw new AIError('Request was cancelled', 'unknown');
+          throw new AIError(t('studio.errors.cancelled'), 'unknown');
         }
         if (!isEnabledField(enabledFieldsRef.current, field)) {
           discardFieldOutput(generatedData, field);
@@ -331,7 +333,7 @@ export function useAIGeneration(): UseAIGenerationResult {
         try {
           const result = await generateField(field, trimmedConcept, generatedData);
           if (isAbortedRef.current) {
-            throw new AIError('Request was cancelled', 'unknown');
+            throw new AIError(t('studio.errors.cancelled'), 'unknown');
           }
           if (!isEnabledField(enabledFieldsRef.current, field)) {
             discardFieldOutput(generatedData, field);
@@ -346,7 +348,7 @@ export function useAIGeneration(): UseAIGenerationResult {
           }));
         } catch (err) {
           if (isAbortedRef.current) {
-            throw new AIError('Request was cancelled', 'unknown');
+            throw new AIError(t('studio.errors.cancelled'), 'unknown');
           }
           if (!isEnabledField(enabledFieldsRef.current, field)) {
             discardFieldOutput(generatedData, field);
@@ -370,7 +372,7 @@ export function useAIGeneration(): UseAIGenerationResult {
         setState({
           ...INITIAL_STATE,
           status: 'error',
-          error: 'Choose one perspective and one tense before generating.',
+          error: t('studio.errors.chooseStyle'),
         });
         return;
       }
@@ -389,7 +391,7 @@ export function useAIGeneration(): UseAIGenerationResult {
         setState({
           ...INITIAL_STATE,
           status: 'error',
-          error: 'AI is not configured. Please configure your AI settings first.',
+          error: t('studio.errors.notConfigured'),
         });
         return;
       }
@@ -418,7 +420,7 @@ export function useAIGeneration(): UseAIGenerationResult {
       } catch (err) {
         if (!isAbortedRef.current) {
           const errorMessage =
-            err instanceof AIError ? err.message : 'An unexpected error occurred during generation';
+            err instanceof AIError ? err.message : t('studio.errors.unexpected');
 
           setState((prev) => ({
             ...prev,
@@ -432,7 +434,7 @@ export function useAIGeneration(): UseAIGenerationResult {
         setIsLoading(false);
       }
     },
-    [loadConfig, runFieldSequence, abortCurrent]
+    [loadConfig, runFieldSequence, abortCurrent, t]
   );
 
   const abort = useCallback(() => {
@@ -443,9 +445,9 @@ export function useAIGeneration(): UseAIGenerationResult {
       ...prev,
       status: 'error',
       currentField: null,
-      error: 'Generation stopped by user.',
+      error: t('studio.errors.stoppedByUser'),
     }));
-  }, [abortCurrent]);
+  }, [abortCurrent, t]);
 
   const retryField = useCallback(
     async (field: GenerationField) => {
@@ -457,7 +459,7 @@ export function useAIGeneration(): UseAIGenerationResult {
         setState((prev) => ({
           ...prev,
           status: 'error',
-          error: 'AI is not configured. Please configure your AI settings first.',
+          error: t('studio.errors.notConfigured'),
         }));
         return;
       }
@@ -509,7 +511,7 @@ export function useAIGeneration(): UseAIGenerationResult {
         }
         if (!isAbortedRef.current) {
           const errorMessage =
-            err instanceof AIError ? err.message : 'An unexpected error occurred during generation';
+            err instanceof AIError ? err.message : t('studio.errors.unexpected');
 
           setState((prev) => ({
             ...prev,
@@ -524,7 +526,7 @@ export function useAIGeneration(): UseAIGenerationResult {
         setIsLoading(false);
       }
     },
-    [loadConfig, generateField, concept, abortCurrent, discardFieldOutput]
+    [loadConfig, generateField, concept, abortCurrent, discardFieldOutput, t]
   );
 
   const regenerateField = useCallback(
@@ -537,7 +539,7 @@ export function useAIGeneration(): UseAIGenerationResult {
         setState((prev) => ({
           ...prev,
           status: 'error',
-          error: 'AI is not configured. Please configure your AI settings first.',
+          error: t('studio.errors.notConfigured'),
         }));
         return;
       }
@@ -593,7 +595,7 @@ export function useAIGeneration(): UseAIGenerationResult {
         }
         if (!isAbortedRef.current) {
           const errorMessage =
-            err instanceof AIError ? err.message : 'An unexpected error occurred during generation';
+            err instanceof AIError ? err.message : t('studio.errors.unexpected');
 
           setState((prev) => ({
             ...prev,
@@ -608,7 +610,7 @@ export function useAIGeneration(): UseAIGenerationResult {
         setIsLoading(false);
       }
     },
-    [loadConfig, generateField, concept, abortCurrent, discardFieldOutput]
+    [loadConfig, generateField, concept, abortCurrent, discardFieldOutput, t]
   );
 
   const continueGeneration = useCallback(async () => {
@@ -620,7 +622,7 @@ export function useAIGeneration(): UseAIGenerationResult {
       setState((prev) => ({
         ...prev,
         status: 'error',
-        error: 'AI is not configured. Please configure your AI settings first.',
+        error: t('studio.errors.notConfigured'),
       }));
       return;
     }
@@ -656,7 +658,7 @@ export function useAIGeneration(): UseAIGenerationResult {
     } catch (err) {
       if (!isAbortedRef.current) {
         const errorMessage =
-          err instanceof AIError ? err.message : 'An unexpected error occurred during generation';
+          err instanceof AIError ? err.message : t('studio.errors.unexpected');
 
         setState((prev) => ({
           ...prev,
@@ -669,7 +671,7 @@ export function useAIGeneration(): UseAIGenerationResult {
     } finally {
       setIsLoading(false);
     }
-  }, [loadConfig, runFieldSequence, concept, abortCurrent]);
+  }, [loadConfig, runFieldSequence, concept, abortCurrent, t]);
 
   const updateGeneratedField = useCallback((field: GenerationField, value: string) => {
     setState((prev) => ({

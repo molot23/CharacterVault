@@ -19,8 +19,9 @@ import {
   Trash2,
   Clock,
 } from 'lucide-react';
+import { useI18n } from '../../i18n';
 import {
-  formatTag,
+  getLocalizedTagLabel,
   getExcludedTagsForUI,
   hasRequiredGenerationTags,
   isCustomTag,
@@ -45,16 +46,17 @@ interface TagSelectorProps {
   favorites: TaggedRef[];
   recent: TaggedRef[];
   onToggleFavorite: (category: string, tag: string) => void;
-  onAddCustomTag: (categoryKey: string, raw: string) => Promise<{ ok: boolean; slug?: string; error?: string }>;
+  onAddCustomTag: (categoryKey: string, raw: string) => Promise<{ ok: boolean; slug?: string; error?: string; categoryKey?: string }>;
   onRemoveCustomTag: (categoryKey: string, tag: string) => void;
 }
 
 const AddCustomTagForm: React.FC<{
   categoryKey: string;
   isGenerating: boolean;
-  onAdd: (categoryKey: string, raw: string) => Promise<{ ok: boolean; slug?: string; error?: string }>;
+  onAdd: (categoryKey: string, raw: string) => Promise<{ ok: boolean; slug?: string; error?: string; categoryKey?: string }>;
   onAdded: (slug: string) => void;
 }> = ({ categoryKey, isGenerating, onAdd, onAdded }) => {
+  const { t } = useI18n();
   const [value, setValue] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
@@ -69,7 +71,16 @@ const AddCustomTagForm: React.FC<{
       setValue('');
       if (result.slug) onAdded(result.slug);
     } else {
-      setError(result.error ?? 'Could not add tag.');
+      const key = result.error ?? 'studio.couldNotAddTag';
+      if (result.categoryKey) {
+        setError(
+          t(key, {
+            category: t(`settings.studio.categories.${result.categoryKey}`),
+          })
+        );
+      } else {
+        setError(t(key));
+      }
     }
   };
 
@@ -86,7 +97,7 @@ const AddCustomTagForm: React.FC<{
           onKeyDown={(e) => {
             if (e.key === 'Enter') void submit();
           }}
-          placeholder="Add your own tag..."
+          placeholder={t('studio.addOwnTag')}
           disabled={isGenerating || isAdding}
           maxLength={40}
           className="flex-1 min-w-0 px-2.5 py-1 bg-bg/50 border border-border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-surface disabled:opacity-50 disabled:cursor-not-allowed transition-all placeholder:text-fg-subtle"
@@ -97,7 +108,7 @@ const AddCustomTagForm: React.FC<{
           className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg border border-border text-fg-muted hover:border-accent/40 hover:bg-accent-soft hover:text-accent transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {isAdding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
-          Add
+          {t('studio.add')}
         </button>
       </div>
       {error && <p className="mt-1 text-xs text-danger">{error}</p>}
@@ -124,6 +135,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
   onAddCustomTag,
   onRemoveCustomTag,
 }) => {
+  const { t } = useI18n();
   const [search, setSearch] = useState('');
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
     () => new Set(['generation'])
@@ -229,7 +241,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search tags..."
+          placeholder={t('studio.searchTags')}
           disabled={isGenerating}
           className="w-full pl-9 pr-4 py-2 bg-bg/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-surface disabled:opacity-50 disabled:cursor-not-allowed transition-all placeholder:text-fg-subtle"
         />
@@ -251,10 +263,10 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
           </div>
           <div>
             <p className="text-sm font-medium text-warning-soft-fg">
-              AI Provider Not Configured
+              {t('studio.providerNotConfigured')}
             </p>
             <p className="text-xs text-warning-soft-fg mt-0.5">
-              Configure your AI provider and choose a model to start generating characters.
+              {t('studio.providerNotConfiguredHelp')}
             </p>
           </div>
           <button
@@ -262,7 +274,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
             className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-warning-soft-fg bg-warning-soft hover:opacity-90 rounded-lg transition-colors"
           >
             <Settings2 className="w-4 h-4" />
-            Configure AI
+            {t('studio.configureAI')}
           </button>
         </div>
       )}
@@ -271,14 +283,14 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
       <div className="space-y-3 p-4 bg-bg/50 border border-border rounded-xl">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold text-fg-muted uppercase tracking-wider">
-            Selected {hasSelection && `(${selectedCount})`}
+            {hasSelection ? t('studio.selectedCount', { count: selectedCount }) : t('studio.selected')}
           </span>
           {hasSelection && (
             <button
               onClick={() => onSelectionsChange({})}
               className="text-xs text-fg-muted hover:text-danger transition-colors"
             >
-              Clear all
+              {t('studio.clearAll')}
             </button>
           )}
         </div>
@@ -292,14 +304,14 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                     key={`${key}-${tag}`}
                     className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-lg border bg-accent-soft text-accent border-accent"
                   >
-                    {formatTag(tag)}
+                    {getLocalizedTagLabel(tag, t)}
                     {key !== 'generation' && (
                       <button
                         onClick={() => onToggleFavorite(key, tag)}
                         disabled={isGenerating}
                         className="ml-0.5 hover:opacity-75 transition-opacity disabled:opacity-40"
-                        aria-label={isFav ? `Unfavorite ${formatTag(tag)}` : `Favorite ${formatTag(tag)}`}
-                        title={isFav ? 'Remove from favorites' : 'Add to favorites'}
+                        aria-label={isFav ? t('studio.unfavorite', { tag: getLocalizedTagLabel(tag, t) }) : t('studio.favorite', { tag: getLocalizedTagLabel(tag, t) })}
+                        title={isFav ? t('studio.removeFromFavorites') : t('studio.addToFavorites')}
                       >
                         <Star className={`w-3 h-3 ${isFav ? 'fill-current' : ''}`} />
                       </button>
@@ -308,7 +320,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                       onClick={() => removeTag(key, tag)}
                       disabled={isGenerating}
                       className="ml-0.5 hover:opacity-75 transition-opacity disabled:opacity-40"
-                      aria-label={`Remove ${formatTag(tag)}`}
+                      aria-label={t('studio.removeTag', { tag: getLocalizedTagLabel(tag, t) })}
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -319,7 +331,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
           </div>
         ) : (
           <p className="text-xs text-fg-subtle italic transition-opacity duration-200">
-            Select a tag for it to appear here.
+            {t('studio.selectTagHint')}
           </p>
         )}
       </div>
@@ -329,7 +341,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
         <div className="space-y-2 p-4 bg-bg/50 border border-border rounded-xl">
           <span className="flex items-center gap-1.5 text-xs font-semibold text-fg-muted uppercase tracking-wider">
             <Star className="w-3.5 h-3.5" />
-            Favorites
+            {t('studio.favorites')}
           </span>
           <div className="flex flex-wrap gap-1.5">
             {favoriteTags.map(({ category, tag }) => {
@@ -348,14 +360,14 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                     disabled={isGenerating}
                     className="disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {formatTag(tag)}
+                    {getLocalizedTagLabel(tag, t)}
                   </button>
                   <button
                     onClick={() => onToggleFavorite(category, tag)}
                     disabled={isGenerating}
                     className="ml-0.5 hover:opacity-75 hover:text-danger transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
-                    aria-label={`Remove ${formatTag(tag)} from favorites`}
-                    title="Remove from favorites"
+                    aria-label={t('studio.removeFromFavoritesNamed', { tag: getLocalizedTagLabel(tag, t) })}
+                    title={t('studio.removeFromFavorites')}
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -371,7 +383,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
         <div className="space-y-2 p-4 bg-bg/50 border border-border rounded-xl">
           <span className="flex items-center gap-1.5 text-xs font-semibold text-fg-muted uppercase tracking-wider">
             <Clock className="w-3.5 h-3.5" />
-            Recent
+            {t('studio.recent')}
           </span>
           <div className="flex flex-wrap gap-1.5">
             {recentTags.map(({ category, tag }) => (
@@ -381,7 +393,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                 disabled={isGenerating}
                 className="px-2.5 py-1 text-xs font-medium rounded-lg border border-border text-fg-muted hover:border-accent/40 hover:bg-accent-soft hover:text-accent transition-all disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {formatTag(tag)}
+                {getLocalizedTagLabel(tag, t)}
               </button>
             ))}
           </div>
@@ -413,16 +425,16 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-semibold text-fg">
-                    {category.label}
+                    {t(`settings.studio.categories.${category.key}`)}
                   </span>
                   {category.key === 'generation' && (
                     <span className="font-bold px-1.5 py-0.5 rounded-full bg-warning-soft text-warning-soft-fg">
-                      Required
+                      {t('studio.required')}
                     </span>
                   )}
                   {category.nsfw && (
                     <span className="font-bold px-1.5 py-0.5 rounded-full bg-danger-soft text-danger-soft-fg">
-                      NSFW
+                      {t('studio.nsfw')}
                     </span>
                   )}
                   {selectedInCat.length > 0 && (
@@ -449,7 +461,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                         <button
                           onClick={() => toggleTag(category.key, tag)}
                           disabled={isGenerating || isExcluded}
-                          title={isExcluded ? 'This tag conflicts with your current selection' : undefined}
+                          title={isExcluded ? t('studio.tagConflicts') : undefined}
                           className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all disabled:cursor-not-allowed ${
                             isSelected
                               ? 'bg-accent-soft text-accent border-accent ring-1 ring-accent'
@@ -460,15 +472,15 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                               : 'border-border text-fg-muted hover:border-accent/40 hover:bg-accent-soft hover:text-accent'
                           }`}
                         >
-                          {formatTag(tag)}
+                          {getLocalizedTagLabel(tag, t)}
                         </button>
                         {custom && (
                           <button
                             onClick={() => onRemoveCustomTag(category.key, tag)}
                             disabled={isGenerating}
                             className="p-1 text-fg-subtle hover:text-danger transition-colors disabled:opacity-40"
-                            aria-label={`Delete custom tag ${formatTag(tag)}`}
-                            title="Delete this custom tag"
+                            aria-label={t('studio.deleteCustomTag', { tag: getLocalizedTagLabel(tag, t) })}
+                            title={t('studio.deleteCustomTagTitle')}
                           >
                             <Trash2 className="w-3 h-3" />
                           </button>
@@ -478,7 +490,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                   })}
                   {filteredTags.length === 0 && searchLower && (
                     <span className="text-xs text-fg-subtle italic">
-                      No matching tags
+                      {t('studio.noMatchingTags')}
                     </span>
                   )}
                   {category.key !== 'generation' && !searchLower && (
@@ -498,27 +510,27 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
 
       {hiddenCategoryCount > 0 && (
         <p className="text-xs text-fg-subtle text-center">
-          {hiddenCategoryCount} {hiddenCategoryCount === 1 ? 'category' : 'categories'} hidden.{' '}
+          {t(hiddenCategoryCount === 1 ? 'studio.hiddenCategories' : 'studio.hiddenCategories_plural', { count: hiddenCategoryCount })}{' '}
           <button onClick={onOpenSettings} className="text-accent hover:underline">
-            Manage in Settings
+            {t('studio.manageInSettings')}
           </button>
         </p>
       )}
 
       {/* API call cost notice */}
       <p className="text-xs text-fg-subtle text-center">
-        Generation uses a minimum of {minApiCalls} API call{minApiCalls === 1 ? '' : 's'}. At least one per field.
+        {t(minApiCalls === 1 ? 'studio.apiCallsNotice' : 'studio.apiCallsNotice_plural', { count: minApiCalls })}
       </p>
 
       {isConfigured && !isGenerating && !hasGenerationTags && (
         <p className="text-xs text-warning text-center">
-          Choose one perspective and one tense before generating.
+          {t('studio.chooseStyleHint')}
         </p>
       )}
 
       {isConfigured && !isGenerating && hasGenerationTags && !hasConceptSelection && (
         <p className="text-xs text-warning text-center">
-          Select at least one character tag before generating, or press I'm Feeling Lucky.
+          {t('studio.selectTagOrLucky')}
         </p>
       )}
 
@@ -534,7 +546,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
           ) : (
             <Sparkles className="w-4 h-4" />
           )}
-          {isGenerating ? 'Generating Character...' : 'Generate Character'}
+          {isGenerating ? t('studio.generatingCharacter') : t('studio.generateCharacter')}
         </button>
         {isGenerating && (
           <button
@@ -542,7 +554,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
             className="flex items-center gap-2 px-4 py-2.5 border border-border-strong text-fg-muted font-medium rounded-xl hover:bg-hover active:scale-[0.98] transition-all"
           >
             <X className="w-4 h-4" />
-            Stop
+            {t('studio.stop')}
           </button>
         )}
       </div>
@@ -555,10 +567,10 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
           className="w-full flex items-center justify-center gap-2 px-5 py-2.5 bg-accent-soft text-accent border border-accent font-semibold rounded-xl hover:bg-accent hover:text-accent-fg active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 shadow-sm"
         >
           <Shuffle className="w-4 h-4" />
-          I'm Feeling Lucky
+          {t('studio.feelingLucky')}
         </button>
         <p className="text-xs text-center text-fg-muted">
-          {hasGenerationTags ? 'Let fate decide. This can get wild.' : 'Choose generation style first.'}
+          {hasGenerationTags ? t('studio.feelingLuckyHint') : t('studio.feelingLuckyNeedStyle')}
         </p>
       </div>
     </div>

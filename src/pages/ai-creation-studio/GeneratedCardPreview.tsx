@@ -4,6 +4,7 @@
  */
 
 import React, { useRef, useEffect, useState, memo } from 'react';
+import { useI18n } from '../../i18n';
 import { Type, FileText, MessageCircle, MessagesSquare, Sparkles } from 'lucide-react';
 import type { GenerationField } from './types';
 import { GENERATION_FIELDS } from './types';
@@ -11,6 +12,7 @@ import type { StudioSettings } from '../../db/characterTypes';
 import { estimateTokens } from '../../services/AIService';
 
 const FieldReasoning: React.FC<{ reasoning: string }> = memo(({ reasoning }) => {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const userScrolledUp = useRef(false);
@@ -31,10 +33,10 @@ const FieldReasoning: React.FC<{ reasoning: string }> = memo(({ reasoning }) => 
           userScrolledUp.current = false;
         }}
         className="flex items-center gap-1 p-0.5 rounded text-fg-subtle hover:text-fg transition-colors"
-        title={open ? 'Hide thinking' : 'Show thinking'}
+        title={open ? t('studio.hideThinking') : t('studio.showThinking')}
       >
         <Sparkles className="w-3 h-3 text-accent" />
-        <span className="text-[11px]">Thinking</span>
+        <span className="text-[11px]">{t('studio.thinking')}</span>
       </button>
       {open && (
         <div
@@ -70,13 +72,6 @@ const FIELD_ICONS: Record<GenerationField, React.ReactNode> = {
   description: <FileText className="w-4 h-4" />,
   first_mes: <MessageCircle className="w-4 h-4" />,
   mes_example: <MessagesSquare className="w-4 h-4" />,
-};
-
-const FIELD_PLACEHOLDERS: Record<GenerationField, string> = {
-  name: 'Character name...',
-  description: 'Character description...',
-  first_mes: 'First message...',
-  mes_example: 'Example dialogues...',
 };
 
 /** Auto-scrolling textarea that follows streamed content to the bottom */
@@ -124,13 +119,14 @@ export const GeneratedCardPreview: React.FC<GeneratedCardPreviewProps> = ({
   enabledFields,
   onFieldChange,
 }) => {
+  const { t } = useI18n();
   const visibleFields = enabledFields
     ? GENERATION_FIELDS.filter((f) => enabledFields[f.key] !== false)
     : GENERATION_FIELDS;
   return (
     <div className="space-y-4">
       <h3 className="text-sm font-semibold text-fg-muted mb-3">
-        Generated Card
+        {t('studio.generatedCard')}
       </h3>
 
       {visibleFields.map((field) => {
@@ -143,11 +139,11 @@ export const GeneratedCardPreview: React.FC<GeneratedCardPreviewProps> = ({
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-1.5 text-xs font-semibold text-fg-muted uppercase tracking-wider">
                 {FIELD_ICONS[field.key]}
-                {field.label}
+                {t(`studio.fields.${field.key}`)}
               </label>
               {value && (
                 <span className="text-xs text-fg-subtle">
-                  ~{tokenCount} tokens
+                  {t('studio.tokens', { count: tokenCount })}
                 </span>
               )}
             </div>
@@ -159,14 +155,14 @@ export const GeneratedCardPreview: React.FC<GeneratedCardPreviewProps> = ({
                 type="text"
                 value={value}
                 onChange={(e) => onFieldChange(field.key, e.target.value)}
-                placeholder={FIELD_PLACEHOLDERS[field.key]}
+                placeholder={t(`studio.fieldPlaceholders.${field.key}`)}
                 className="w-full px-3 py-2 bg-surface border border-border rounded-lg text-sm text-fg focus:outline-none focus:ring-2 focus:ring-accent transition-all"
               />
             ) : (
               <StreamingTextarea
                 value={value}
                 onChange={(e) => onFieldChange(field.key, e.target.value)}
-                placeholder={FIELD_PLACEHOLDERS[field.key]}
+                placeholder={t(`studio.fieldPlaceholders.${field.key}`)}
                 rows={field.key === 'description' ? 6 : 4}
                 className={`w-full px-3 py-2 bg-surface border border-border rounded-lg text-sm text-fg resize-y overflow-y-auto focus:outline-none focus:ring-2 focus:ring-accent transition-all ${
                   field.key === 'description' ? 'max-h-48' : 'max-h-36'

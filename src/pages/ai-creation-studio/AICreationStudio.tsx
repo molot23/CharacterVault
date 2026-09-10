@@ -5,6 +5,7 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useI18n } from '../../i18n';
 import {
   ArrowLeft,
   Settings2,
@@ -27,12 +28,13 @@ import { GenerationProgress } from './GenerationProgress';
 import { GeneratedCardPreview } from './GeneratedCardPreview';
 import { TagVortexOverlay } from './TagVortexOverlay';
 import { randomizeTags } from './tags/tagData';
-import { buildConceptFromTags, formatTag, getGenerationTags, hasRequiredGenerationTags } from './tags/tagData';
+import { buildConceptFromTags, formatTag, getLocalizedTagLabel, getGenerationTags, hasRequiredGenerationTags } from './tags/tagData';
 import type { GenerationField } from './types';
 import type { InputMode } from './types';
 import { GENERATION_FIELDS } from './types';
 
 export const AICreationStudio: React.FC = () => {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const { createCharacter, closeCharacter } = useCharacterContext();
   const { closeLorebook } = useLorebookContext();
@@ -319,13 +321,13 @@ export const AICreationStudio: React.FC = () => {
             <button
               onClick={handleBackToLibrary}
               className="p-2 rounded-lg transition-all duration-200 active:scale-95 text-fg-muted hover:text-accent hover:bg-accent-soft"
-              title="Back to Library"
+              title={t('studio.backToLibrary')}
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-accent" />
-              <h1 className="text-lg font-semibold">AI Creation Studio</h1>
+              <h1 className="text-lg font-semibold">{t('studio.title')}</h1>
             </div>
           </div>
 
@@ -334,7 +336,7 @@ export const AICreationStudio: React.FC = () => {
             className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-fg-muted hover:bg-accent-soft hover:text-accent rounded-lg transition-colors"
           >
             <Settings2 className="w-4 h-4" />
-            <span className="hidden sm:inline">Settings</span>
+            <span className="hidden sm:inline">{t('common.settings')}</span>
           </button>
         </div>
       </header>
@@ -350,13 +352,10 @@ export const AICreationStudio: React.FC = () => {
                   <CheckCircle className="w-7 h-7 text-success" />
                 </div>
                 <h2 className="text-xl font-bold text-success-soft-fg mb-2">
-                  Character Saved!
+                  {t('studio.characterSaved')}
                 </h2>
                 <p className="text-success mb-6">
-                  <span className="font-medium text-success-soft-fg">
-                    {state.generatedData.name}
-                  </span>{' '}
-                  has been added to your vault.
+                  {t('studio.addedToVault', { name: state.generatedData.name || '' })}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
                   <button
@@ -364,21 +363,21 @@ export const AICreationStudio: React.FC = () => {
                     className="flex-1 flex items-center justify-center gap-2 px-6 py-2.5 bg-accent text-accent-fg font-medium rounded-xl hover:opacity-90 transition-opacity"
                   >
                     <ExternalLink className="w-4 h-4" />
-                    Open Character
+                    {t('studio.openCharacter')}
                   </button>
                   <button
                     onClick={handleCreateAnother}
                     className="flex items-center justify-center gap-2 px-6 py-2.5 border border-border-strong text-fg-muted font-medium rounded-xl hover:bg-hover transition-colors"
                   >
                     <Sparkles className="w-4 h-4" />
-                    Create Another
+                    {t('studio.createAnother')}
                   </button>
                   <button
                     onClick={handleBackToLibrary}
                     className="flex items-center justify-center gap-2 px-6 py-2.5 text-fg-muted hover:text-fg transition-colors"
                   >
                     <Library className="w-4 h-4" />
-                    Library
+                    {t('studio.library')}
                   </button>
                 </div>
               </div>
@@ -429,28 +428,28 @@ export const AICreationStudio: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-semibold text-fg">
-                          Generating character...
+                          {t('studio.generatingCharacterShort')}
                         </p>
                         <p className="text-xs text-fg-muted">
-                          This may take a moment.
+                          {t('studio.mayTakeMoment')}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={handleAbort}
                           className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-danger border border-danger/40 rounded-lg hover:bg-danger-soft active:scale-[0.98] transition-all"
-                          title="Stop generation and keep what's been generated"
+                          title={t('studio.stopTitle')}
                         >
                           <X className="w-4 h-4" />
-                          Stop
+                          {t('studio.stop')}
                         </button>
                         <button
                           onClick={handleGoBack}
                           className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-fg-muted border border-border-strong rounded-lg hover:bg-hover active:scale-[0.98] transition-all"
-                          title="Cancel and return to concept input"
+                          title={t('studio.goBackTitle')}
                         >
                           <RotateCcw className="w-4 h-4" />
-                          Go Back
+                          {t('studio.goBack')}
                         </button>
                       </div>
                     </div>
@@ -459,7 +458,7 @@ export const AICreationStudio: React.FC = () => {
                     {inputMode === 'tags' && (
                       <div className="pt-3 border-t border-border">
                         <p className="font-semibold text-fg-muted uppercase tracking-wider mb-2">
-                          Tags used
+                          {t('studio.tagsUsed')}
                         </p>
                         <div className="flex flex-wrap gap-1.5">
                           {allCategories.flatMap((cat) =>
@@ -468,7 +467,7 @@ export const AICreationStudio: React.FC = () => {
                                 key={`${cat.key}-${tag}`}
                                 className="inline-flex items-center px-2 py-0.5 font-medium rounded-md bg-accent-soft text-accent border border-accent"
                               >
-                                {formatTag(tag)}
+                                {getLocalizedTagLabel(tag, t)}
                               </span>
                             ))
                           )}
@@ -479,7 +478,7 @@ export const AICreationStudio: React.FC = () => {
                     {inputMode === 'write' && concept && (
                       <div className="pt-3 border-t border-border">
                         <p className="font-semibold text-fg-muted uppercase tracking-wider mb-1">
-                          Concept
+                          {t('studio.concept')}
                         </p>
                         <p className="text-sm text-fg-muted italic">
                           &ldquo;{concept}&rdquo;
@@ -497,28 +496,38 @@ export const AICreationStudio: React.FC = () => {
                         {state.status === 'error' ? (
                           <>
                             <p className="text-sm font-semibold text-danger-soft-fg">
-                              Generation Failed
+                              {t('studio.generationFailed')}
                             </p>
                             <p className="text-xs text-danger mt-0.5">
-                              {state.error || 'Something went wrong during generation.'}
+                              {state.error || t('studio.somethingWentWrong')}
                             </p>
                           </>
                         ) : hasRemainingFields ? (
                           <>
                             <p className="text-sm font-semibold text-fg">
-                              Partially Complete
+                              {t('studio.partiallyComplete')}
                             </p>
                             <p className="text-xs text-fg-muted">
-                              {remainingFields.length} field{remainingFields.length > 1 ? 's' : ''} remaining: {remainingFields.map((f) => f.label).join(', ')}.
+                              {t(
+                                remainingFields.length === 1
+                                  ? 'studio.fieldsRemaining'
+                                  : 'studio.fieldsRemaining_plural',
+                                {
+                                  count: remainingFields.length,
+                                  fields: remainingFields
+                                    .map((f) => t(`studio.fields.${f.key}`))
+                                    .join(', '),
+                                }
+                              )}
                             </p>
                           </>
                         ) : (
                           <>
                             <p className="text-sm font-semibold text-fg">
-                              Character Complete
+                              {t('studio.characterComplete')}
                             </p>
                             <p className="text-xs text-fg-muted">
-                              Review or save your character, or start over.
+                              {t('studio.reviewOrSave')}
                             </p>
                           </>
                         )}
@@ -528,19 +537,19 @@ export const AICreationStudio: React.FC = () => {
                           <button
                             onClick={() => void continueGeneration()}
                             className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-accent bg-accent-soft border border-accent rounded-lg hover:bg-accent hover:text-accent-fg active:scale-[0.98] transition-all"
-                            title="Continue generating remaining fields"
+                            title={t('studio.continueTitle')}
                           >
                             <Sparkles className="w-4 h-4" />
-                            Continue
+                            {t('studio.continue')}
                           </button>
                         )}
                         <button
                           onClick={handleGoBack}
                           className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-fg-muted border border-border-strong rounded-lg hover:bg-hover active:scale-[0.98] transition-all"
-                          title="Start a new character"
+                          title={t('studio.startNewTitle')}
                         >
                           <RotateCcw className="w-4 h-4" />
-                          Go Back
+                          {t('studio.goBack')}
                         </button>
                       </div>
                     </div>
@@ -549,7 +558,7 @@ export const AICreationStudio: React.FC = () => {
                     {inputMode === 'tags' && Object.values(tagSelections).some((t) => t.length > 0) && (
                       <div className="pt-3 mt-3 border-t border-border">
                         <p className="font-semibold text-fg-muted uppercase tracking-wider mb-2">
-                          Tags used
+                          {t('studio.tagsUsed')}
                         </p>
                         <div className="flex flex-wrap gap-1.5">
                           {allCategories.flatMap((cat) =>
@@ -558,7 +567,7 @@ export const AICreationStudio: React.FC = () => {
                                 key={`${cat.key}-${tag}`}
                                 className="inline-flex items-center px-2 py-0.5 font-medium rounded-md bg-accent-soft text-accent border border-accent"
                               >
-                                {formatTag(tag)}
+                                {getLocalizedTagLabel(tag, t)}
                               </span>
                             ))
                           )}
@@ -568,7 +577,7 @@ export const AICreationStudio: React.FC = () => {
                     {inputMode === 'write' && concept && (
                       <div className="pt-3 mt-3 border-t border-border">
                         <p className="font-semibold text-fg-muted uppercase tracking-wider mb-1">
-                          Concept
+                          {t('studio.concept')}
                         </p>
                         <p className="text-sm text-fg-muted italic">
                           &ldquo;{concept}&rdquo;
@@ -616,7 +625,7 @@ export const AICreationStudio: React.FC = () => {
                         ) : (
                           <Save className="w-4 h-4" />
                         )}
-                        {isSaving ? 'Saving...' : 'Save to Vault'}
+                        {isSaving ? t('studio.saving') : t('studio.saveToVault')}
                       </button>
                     </div>
                   )}

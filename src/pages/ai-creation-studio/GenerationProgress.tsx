@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { useI18n } from '../../i18n';
 import { Loader2, Check, AlertCircle, RotateCcw, Sparkles, RefreshCw } from 'lucide-react';
 import type { GenerationField, GenerationState } from './types';
 import { GENERATION_FIELDS } from './types';
@@ -24,6 +25,7 @@ export const GenerationProgress: React.FC<GenerationProgressProps> = ({
   onGenerateField,
   onRegenerateField,
 }) => {
+  const { t } = useI18n();
   const { status, currentField, completedFields, error, failedField } = state;
 
   const hasError = status === 'error';
@@ -34,7 +36,7 @@ export const GenerationProgress: React.FC<GenerationProgressProps> = ({
   return (
     <div className="space-y-2">
       <h3 className="text-sm font-semibold text-fg-muted mb-3">
-        Generation Progress
+        {t('studio.generationProgress')}
       </h3>
 
       {visibleFields.map((field) => {
@@ -80,11 +82,11 @@ export const GenerationProgress: React.FC<GenerationProgressProps> = ({
                     : 'text-fg-muted'
                 }`}
               >
-                {field.label}
+                {t(`studio.fields.${field.key}`)}
               </span>
               {isActive && (
                 <p className="text-xs text-accent/80 mt-0.5">
-                  Generating...
+                  {t('studio.generating')}
                 </p>
               )}
               {isFailed && (
@@ -99,10 +101,10 @@ export const GenerationProgress: React.FC<GenerationProgressProps> = ({
                 onClick={() => onGenerateField(field.key)}
                 disabled={isLoading}
                 className="shrink-0 flex items-center gap-1 px-2 py-1 text-xs font-medium text-fg-muted hover:bg-hover rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                title="Retry this field"
+                title={t('studio.retryTitle')}
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                Retry
+                {t('studio.retry')}
               </button>
             )}
 
@@ -111,10 +113,10 @@ export const GenerationProgress: React.FC<GenerationProgressProps> = ({
                 onClick={() => onRegenerateField(field.key)}
                 disabled={isLoading}
                 className="shrink-0 flex items-center gap-1 px-2 py-1 text-xs font-medium text-success hover:bg-success-soft rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                title="Regenerate this field"
+                title={t('studio.regenerateTitle')}
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                Regenerate
+                {t('studio.regenerate')}
               </button>
             )}
 
@@ -123,10 +125,10 @@ export const GenerationProgress: React.FC<GenerationProgressProps> = ({
                 onClick={() => onGenerateField(field.key)}
                 disabled={isLoading}
                 className="shrink-0 flex items-center gap-1 px-2 py-1 text-xs font-medium text-accent hover:bg-accent-soft rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                title="Generate this field"
+                title={t('studio.generateTitle')}
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                Generate
+                {t('studio.generate')}
               </button>
             )}
           </div>

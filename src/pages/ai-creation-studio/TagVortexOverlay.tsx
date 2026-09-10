@@ -4,8 +4,9 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { useI18n } from '../../i18n';
 import { Dices } from 'lucide-react';
-import { formatTag, getAllTags } from './tags/tagData';
+import { getLocalizedTagLabel, getAllTags } from './tags/tagData';
 
 interface TagVortexOverlayProps {
   selectedTags: string[];
@@ -86,6 +87,7 @@ export const TagVortexOverlay: React.FC<TagVortexOverlayProps> = ({
   onComplete,
   onAnimationStart,
 }) => {
+  const { t } = useI18n();
   const [phase, setPhase] = useState<Phase>('waiting');
   const [fadeOut, setFadeOut] = useState(false);
   const [swirlExiting, setSwirlExiting] = useState(false);
@@ -201,7 +203,7 @@ export const TagVortexOverlay: React.FC<TagVortexOverlayProps> = ({
       role="dialog"
       aria-modal="true"
       aria-busy={phase !== 'reveal'}
-      aria-label="Choosing random tags"
+      aria-label={t('studio.choosingRandomTags')}
       className={`fixed inset-0 z-9999 flex items-center justify-center bg-overlay backdrop-blur-md transition-opacity duration-500 ease-out ${
         fadeOut ? 'opacity-0' : 'opacity-100'
       }`}
@@ -241,7 +243,7 @@ export const TagVortexOverlay: React.FC<TagVortexOverlayProps> = ({
                       : undefined,
                   }}
                 >
-                  {formatTag(tag.label)}
+                  {getLocalizedTagLabel(tag.label, t)}
                 </div>
               </div>
             ))}
@@ -269,7 +271,7 @@ export const TagVortexOverlay: React.FC<TagVortexOverlayProps> = ({
                     boxShadow: '0 0 22px color-mix(in srgb, var(--accent) 35%, transparent)',
                   }}
                 >
-                  {formatTag(tag)}
+                  {getLocalizedTagLabel(tag, t)}
                 </div>
               ))}
             </div>
@@ -287,7 +289,7 @@ export const TagVortexOverlay: React.FC<TagVortexOverlayProps> = ({
                 />
               </div>
               <span className="text-xl font-semibold tracking-wide text-fg sm:text-2xl">
-                Good luck…
+                {t('studio.goodLuck')}
               </span>
             </div>
           </div>

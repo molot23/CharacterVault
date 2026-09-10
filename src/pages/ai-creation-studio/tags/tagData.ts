@@ -219,6 +219,7 @@ export const NSFW_TAG_CATEGORIES: readonly string[] = TAG_CATEGORIES.filter((c) 
  */
 export function formatTag(tag: string): string {
   // Special case for first_person_you generation tag
+  // Keep English for concept/API payloads; UI uses getLocalizedTagLabel.
   if (tag === 'first_person_you') {
     return "1st person (refer to {{user}} as 'you')";
   }
@@ -227,6 +228,22 @@ export function formatTag(tag: string): string {
     .split('_')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
+}
+
+const GENERATION_TAG_LABEL_KEYS = new Set<string>([...PERSPECTIVE_TAGS, ...TENSE_TAGS]);
+
+/**
+ * Localized label for UI display. Generation style tags use i18n;
+ * other tags keep English Title Case via formatTag (slugs stay language-neutral for prompts).
+ */
+export function getLocalizedTagLabel(
+  tag: string,
+  t: (key: string, values?: Record<string, string | number>) => string
+): string {
+  if (GENERATION_TAG_LABEL_KEYS.has(tag)) {
+    return t(`studio.generationTags.${tag}`);
+  }
+  return formatTag(tag);
 }
 
 /**
@@ -479,19 +496,19 @@ export function resolveNewCustomTag(
   categoryKey: string,
   raw: string,
   customTags: Record<string, string[]> = {}
-): { ok: true; slug: string } | { ok: false; error: string } {
+): { ok: true; slug: string } | { ok: false; error: string; categoryKey?: string } {
   if (categoryKey === 'generation') {
-    return { ok: false, error: 'Custom tags cannot be added to Generation.' };
+    return { ok: false, error: 'studio.errors.customNotInGeneration' };
   }
   const slug = normalizeTagSlug(raw);
   if (!slug) {
-    return { ok: false, error: 'Use letters and numbers — e.g. "space pirate".' };
+    return { ok: false, error: 'studio.errors.invalidSlug' };
   }
   const base = TAG_CATEGORIES.find((c) => c.key === categoryKey);
-  if (!base) return { ok: false, error: 'Unknown category.' };
+  if (!base) return { ok: false, error: 'studio.errors.unknownCategory' };
   const owner = findTagCategory(slug, customTags);
   if (owner) {
-    return { ok: false, error: `This tag already exists in ${owner.label} category.` };
+    return { ok: false, error: 'studio.errors.tagAlreadyExists', categoryKey: owner.key };
   }
   return { ok: true, slug };
 }
