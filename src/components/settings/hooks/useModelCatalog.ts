@@ -346,6 +346,17 @@ export function useModelCatalog({
         const shouldSaveAsCustom =
           prev.ai.baseUrl && !isPresetUrl(prev.ai.baseUrl) && baseUrl !== prev.ai.baseUrl;
 
+        const storedKey = loadStoredProfile
+          ? getStoredApiKey(prev.ai.apiKeysByBaseUrl, baseUrl)
+          : '';
+        // Selecting a new preset (e.g. KKAI proxy) must not wipe the key the user
+        // already typed for their previous relay URL.
+        const nextKey = loadStoredProfile ? storedKey || prev.ai.apiKey : prev.ai.apiKey;
+        const storedModel = loadStoredProfile
+          ? getStoredModelId(prev.ai.modelIdsByBaseUrl, baseUrl)
+          : '';
+        const nextModel = loadStoredProfile ? storedModel || prev.ai.modelId : prev.ai.modelId;
+
         return {
           ...prev,
           ai: {
@@ -354,19 +365,20 @@ export function useModelCatalog({
             lastCustomBaseUrl: shouldSaveAsCustom
               ? normalizeBaseUrl(prev.ai.baseUrl)
               : prev.ai.lastCustomBaseUrl,
-            modelId: loadStoredProfile
-              ? getStoredModelId(prev.ai.modelIdsByBaseUrl, baseUrl)
-              : prev.ai.modelId,
-            apiKey: loadStoredProfile
-              ? getStoredApiKey(prev.ai.apiKeysByBaseUrl, baseUrl)
-              : prev.ai.apiKey,
+            modelId: nextModel,
+            apiKey: nextKey,
             availableModels: cachedModels,
+            apiKeysByBaseUrl:
+              normalizedUrl && nextKey
+                ? { ...prev.ai.apiKeysByBaseUrl, [normalizedUrl]: nextKey }
+                : prev.ai.apiKeysByBaseUrl,
           },
         };
       });
 
       if (cachedModels.length === 0) {
-        const apiKey = draftRef.current.ai.apiKeysByBaseUrl?.[normalizedUrl];
+        const apiKey =
+          draftRef.current.ai.apiKeysByBaseUrl?.[normalizedUrl] || draftRef.current.ai.apiKey;
         if (apiKey) {
           void fetchModelsForUrl(baseUrl, apiKey, { subscriptionOnly }).then((models) => {
             if (!mountedRef.current || !isOpenRef.current) return;
